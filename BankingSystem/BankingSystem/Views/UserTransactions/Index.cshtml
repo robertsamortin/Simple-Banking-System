@@ -1,6 +1,7 @@
-﻿@using PagedList.Core;
-@using PagedList.Core.Mvc;
-@model List<UserTransactions>
+﻿
+@using ReflectionIT.Mvc.Paging;
+
+@model PagingList<UserTransactions>
 @inject IUserManager UserManager
 @{
     ViewData["Title"] = "Transaction List";
@@ -102,8 +103,10 @@ else
             }
             else
             {   
-                @*<pager class="pager-container" list="Model.ToList()" options="@PagedListRenderOptions.TwitterBootstrapPager" asp-action="Index" asp-controller="UserTransactions" />*@
-
+                
+                <nav>
+                    @await this.Component.InvokeAsync("Pager", new { pagingList = this.Model})
+                </nav>
                 <table class="table table-striped">
                     <!-- Table header -->
                     <thead>
@@ -144,6 +147,9 @@ else
                         </tr>
                     </tfoot>
                 </table>
+                <nav>
+                    <vc:pager paging-list="@Model"/>
+                </nav>
             }
         }
 

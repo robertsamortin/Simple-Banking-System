@@ -4,7 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using BankingSystem.Models;
 using Microsoft.AspNetCore.Mvc;
-using PagedList.Core;
+using Microsoft.AspNetCore.Routing;
+using ReflectionIT.Mvc;
+using ReflectionIT.Mvc.Paging;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -20,13 +22,20 @@ namespace BankingSystem.Controllers
             _userManager = userManager;
         }
 
-        public IActionResult Index(string AccountNumber)   
+        public IActionResult Index(string AccountNumber, int page=1)   
         {
             if (this.User.Identity.IsAuthenticated)
             {
-                var userTrans = users.GetUserTransactionsByAccountNumber(AccountNumber);
+                var item = users.GetUserTransactionsByAccountNumber(AccountNumber);
+                //var userTrans = users.GetUserTransactionsByAccountNumber(AccountNumber);
+                var userTrans = PagingList.Create(item, 10, page);
                 if (userTrans.Count == 0)
                     ModelState.AddModelError("Info", "No Current Record Found.");
+
+                userTrans.RouteValue = new RouteValueDictionary {
+                { "AccountNumber", AccountNumber}
+                };
+
                 return View(userTrans);
             }
             else
