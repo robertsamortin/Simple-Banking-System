@@ -14039,11 +14039,11 @@
       "hideWarningsAndErrors": true
     },
     "restore": {
-      "projectUniqueName": "D:\\BankingSystem\\BankingSystem\\UnitTest\\UnitTest.csproj",
+      "projectUniqueName": "D:\\My Files\\SimpleBankingSystem\\BankingSystem\\UnitTest\\UnitTest.csproj",
       "projectName": "UnitTest",
-      "projectPath": "D:\\BankingSystem\\BankingSystem\\UnitTest\\UnitTest.csproj",
+      "projectPath": "D:\\My Files\\SimpleBankingSystem\\BankingSystem\\UnitTest\\UnitTest.csproj",
       "packagesPath": "C:\\Users\\User\\.nuget\\packages\\",
-      "outputPath": "D:\\BankingSystem\\BankingSystem\\UnitTest\\obj\\",
+      "outputPath": "D:\\My Files\\SimpleBankingSystem\\BankingSystem\\UnitTest\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
@@ -14062,8 +14062,8 @@
       "frameworks": {
         "netcoreapp2.0": {
           "projectReferences": {
-            "D:\\BankingSystem\\BankingSystem\\BankingSystem\\BankingSystem.csproj": {
-              "projectPath": "D:\\BankingSystem\\BankingSystem\\BankingSystem\\BankingSystem.csproj"
+            "D:\\My Files\\SimpleBankingSystem\\BankingSystem\\BankingSystem\\BankingSystem.csproj": {
+              "projectPath": "D:\\My Files\\SimpleBankingSystem\\BankingSystem\\BankingSystem\\BankingSystem.csproj"
             }
           }
         }

@@ -12981,11 +12981,11 @@
       "hideWarningsAndErrors": true
     },
     "restore": {
-      "projectUniqueName": "D:\\BankingSystem\\BankingSystem\\BankingSystem\\BankingSystem.csproj",
+      "projectUniqueName": "D:\\My Files\\SimpleBankingSystem\\BankingSystem\\BankingSystem\\BankingSystem.csproj",
       "projectName": "BankingSystem",
-      "projectPath": "D:\\BankingSystem\\BankingSystem\\BankingSystem\\BankingSystem.csproj",
+      "projectPath": "D:\\My Files\\SimpleBankingSystem\\BankingSystem\\BankingSystem\\BankingSystem.csproj",
       "packagesPath": "C:\\Users\\User\\.nuget\\packages\\",
-      "outputPath": "D:\\BankingSystem\\BankingSystem\\BankingSystem\\obj\\",
+      "outputPath": "D:\\My Files\\SimpleBankingSystem\\BankingSystem\\BankingSystem\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
