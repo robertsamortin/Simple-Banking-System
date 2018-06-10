@@ -1,0 +1,337 @@
+﻿@using PagedList.Core;
+@using PagedList.Core.Mvc;
+@model List<UserTransactions>
+@inject IUserManager UserManager
+@{
+    ViewData["Title"] = "Transaction List";
+}
+
+@{
+    string ID;
+    string AccountNumber;
+    string LoginName;
+    string Balance;
+    double bal = 0;
+}
+@if (this.User.Identity.IsAuthenticated)
+{
+    ID = UserManager.GetCurrentUser(this.Context).ID.ToString();
+    AccountNumber = UserManager.GetCurrentUser(this.Context).AccountNumber;
+    LoginName = UserManager.GetCurrentUser(this.Context).LoginName;
+    Balance = UserManager.GetCurrentUser(this.Context).Balance.ToString() ?? "0.00";
+    bal = double.Parse(Balance);
+    
+}
+else
+{
+    ID = "0.00";
+    AccountNumber = "";
+    LoginName = "";
+    Balance = "0";
+}
+<div>
+
+    <h5>Account Number: <strong>@AccountNumber</strong></h5>
+    <h5>Current Balance: <strong>@String.Format("{0:N2}", bal)</strong></h5>
+
+</div>
+<hr />
+<div>
+
+    <button onclick="ShowPopUpDep()" type="button" class="btn btn-primary btn-md">Deposit</button>
+    <button onclick="ShowPopUpWith()" @(Model.FirstOrDefault().Balance == 0 ? "disabled" : "") type="button" class="btn btn-primary btn-md" asp-controller="Users" asp-action="Login">Withdrawal</button>
+    <button onclick="ShowPopUpFund()" @(Model.FirstOrDefault().Balance == 0 ? "disabled" : "") type="button" class="btn btn-primary btn-md" asp-controller="Users" asp-action="Login">Fund Transfer</button>
+</div>
+
+<h4><strong>TRANSACTION HISTORY</strong></h4>
+<hr />
+
+@*DEPOSIT*@
+<div id="popDeposit" class="col-sm-12" hidden title="Deposit">
+    <div class="form-group">
+        <label>Available Balance: </label>
+        <br />
+        <label style="font-size:20px">@String.Format("{0:N2}", bal)</label>
+
+    </div>
+    <div class="form-group">
+        <label>Enter Amount:</label>
+        <input class="form-control" id="DepAmount" type="number">
+    </div>
+</div>
+
+@*WITHDRAWAL*@
+<div id="popWithdrawal" class="col-sm-12" hidden title="Withdrawal">
+    <div class="form-group">
+        <label>Available Balance: </label>
+        <br />
+        <label style="font-size:20px">@String.Format("{0:N2}", bal)</label>
+
+    </div>
+    <div class="form-group">
+        <label>Enter Amount:</label>
+        <input class="form-control" id="WithAmount" type="number">
+    </div>
+</div>
+
+@*FUND TRANSFER*@
+<div id="popFundTransfer" class="col-sm-12" hidden title="Fund Transfer">
+    <div class="form-group">
+        <label>Available Balance: </label>
+        <br />
+        <label style="font-size:20px">@String.Format("{0:N2}", bal)</label>
+
+    </div>
+    <div class="form-group">
+        <label>Enter Amount:</label>
+        <input class="form-control" id="TransferAmount" type="number">
+    </div>
+    <div class="form-group">
+        <label>Transfer to Account Number:</label>
+        <input class="form-control" id="TransferAccount">
+        @*<input class="form-control" id="tAccountNo">*@
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        @{
+            if (Model.FirstOrDefault().Balance == 0)
+            {
+                <strong>@Html.ValidationMessage("Info")</strong>
+            }
+            else
+            {   
+                @*<pager class="pager-container" list="Model.ToList()" options="@PagedListRenderOptions.TwitterBootstrapPager" asp-action="Index" asp-controller="UserTransactions" />*@
+
+                <table class="table table-striped">
+                    <!-- Table header -->
+                    <thead>
+                        <tr>
+
+                            <th hidden>ID</th>
+                            <th>Date/Time</th>
+                            <th>Type</th>
+                            <th class="text-right">Amount</th>
+                            <th class="text-right">Running Balance</th>
+                            <th class="text-center">Transacted By</th>
+                        </tr>
+                    </thead>
+                    <!-- Table body -->
+                    <tbody>
+
+                        @foreach (var item in @Model)
+                        {
+                            <tr>
+                                <td hidden>@item.ID.ToString()</td>
+                                <td align="left">@item.TransDate.ToString()</td>
+                                <td align="left">@item.TransType.ToString()</td>
+                                <td align="right">@String.Format("{0:#,###.00;(#,###.00);0}", @item.Amount)</td>
+                                <td align="right">@String.Format("{0:#,###.00;(#,###.00);0}", @item.RunningBalance)</td>
+                                <td align="center">@item.TransBy.ToString()</td>
+                            </tr>
+                        }
+
+                    </tbody>
+                    <!-- Table footer -->
+                    <tfoot>
+                        <tr>
+                            <td hidden></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            }
+        }
+
+
+    </div>
+
+
+</div>
+
+
+<script>
+    @*DEPOSIT *@
+    function ShowPopUpDep() {
+        $('#popDeposit').dialog({
+            modal: true,
+            buttons: {
+                "Save": function () {
+
+                    var Amount = $('#DepAmount').val();
+                    var acctNo = @AccountNumber;
+                    var iNum = parseFloat(Amount);
+                    var tType = "Deposit";
+                    if (Amount == "") {
+                        alert('Please enter valid amount');
+                    }
+                    else
+                    {
+                        var c = confirm('You are about to deposit the amount of ' + iNum + '. \nContinue?');
+                        if (c == true)
+                        {
+                            $.ajax({
+                            type: 'POST',
+                            data: {
+                                Amount: iNum,
+                                AccountNumber: acctNo,
+                                TransBy: acctNo,
+                                TransType: tType
+                            },
+                            url: '@Url.Action("InsertTrans", "UserTransactions")'
+                            });
+                            $.ajax({
+                                type: 'GET',
+                                data: {
+                                    AccountNumber: acctNo
+                                },
+                                url: '@Url.Action("Index", "UserTransactions")'
+                                });
+                            location.reload();
+                            //$(this).dialog("close");
+                        }
+                    }
+                },
+                "Cancel": function () {
+                    $(this).dialog("close");
+                }
+            }
+        });
+    }
+
+    @*WITHDRAWAL *@
+    function ShowPopUpWith() {
+        $('#popWithdrawal').dialog({
+            modal: true,
+            buttons: {
+                "Save": function () {
+                    var Amount = $('#WithAmount').val();
+                    var acctNo = @AccountNumber;
+                    var iNum = parseFloat(Amount) * -1;
+                    var tType = "Withdrawal";
+                    if (Amount == "") {
+                        alert('Please enter valid amount');
+                    }
+                    else if (parseFloat(Amount) > @Balance) {
+                        alert('You cannot withdraw that is greater than your available balance');
+                    }
+                    else
+                    {
+                        var c = confirm('You are about to withdraw the amount of ' + parseFloat(Amount) + '. \nContinue?');
+                            if (c == true)
+                            {
+                                $.ajax({
+                                type: 'POST',
+                                    data: {
+                                        Amount: iNum,
+                                        AccountNumber: acctNo,
+                                        TransBy: acctNo,
+                                        TransType: tType
+                                    },
+                                    url: '@Url.Action("InsertTrans", "UserTransactions")'
+                                });
+
+                                $.ajax({
+                                    type: 'GET',
+                                    data: {
+                                        AccountNumber: acctNo
+                                    },
+                                    url: '@Url.Action("Index", "UserTransactions")'
+                                    });
+                                location.reload();
+                                //$(this).dialog("close");
+                            }
+                    }
+                },
+                "Cancel": function () {
+                    $(this).dialog("close");
+                }
+            }
+            });
+    }
+
+     @*FUND TRANSFER *@
+    function ShowPopUpFund() {
+        $('#popFundTransfer').dialog({
+            modal: true,
+            buttons: {
+                "Save": function () {
+                    var toAccntNo = $('#TransferAccount').val();
+
+                    var Amount = $('#TransferAmount').val();
+                    var acctNo = @AccountNumber;
+                    var iNum = parseFloat(Amount) * -1;
+
+                    var tType = "Fund Transfer";
+                    if (Amount == "") {
+                        alert('Please enter valid amount');
+                    }
+                    else if (parseFloat(Amount) > @Balance) {
+                        alert('You cannot transfer fund that is greater than your available balance');
+                    }
+                    else if (toAccntNo == "") {
+                        alert('Please enter valid account no.');
+                    }
+                    else if (toAccntNo == acctNo) {
+                        alert('You cannot transfer fund to your own account.');
+                    }
+                    else
+                    {
+                        //CHECK ACCNT NO IF EXIST
+                        $.ajax({
+                            type: 'GET',
+                            data: { AccountNumber: toAccntNo},
+                            url: '@Url.Action("CheckAccount", "Users")',
+                            success: function (data) {
+                                if (data) {
+                                    var c = confirm('Are you about to transfer the amount of ' + parseFloat(Amount) + ' to Account No. ' + toAccntNo + '. \nContinue?');
+                                    if (c == true)
+                                    {
+                                        $.ajax({
+                                        type: 'POST',
+                                        data: {
+                                            Amount: iNum,
+                                            AccountNumber: toAccntNo,
+                                            TransBy: acctNo,
+                                            TransType: tType
+                                        },
+                                        url: '@Url.Action("InsertTrans", "UserTransactions")'
+                                        });
+
+                                        $.ajax({
+                                        type: 'GET',
+                                        data: {
+                                            AccountNumber: acctNo
+                                        },
+                                        url: '@Url.Action("Index", "UserTransactions")'
+                                        });
+                                        location.reload();
+
+                                    }
+
+                                }
+                                else {
+                                    alert("You have entered invalid Account Number.");
+                                }
+                            },
+                            error: function () {
+                                alert("Someting went wrong.");
+                            }
+
+                        });
+                        //$(this).dialog("close");
+                    }
+
+                },
+                "Cancel": function () {
+                    $(this).dialog("close");
+                }
+            }
+        });
+
+        }
+</script>

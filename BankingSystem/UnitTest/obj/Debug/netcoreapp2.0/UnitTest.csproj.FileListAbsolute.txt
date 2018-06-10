@@ -1,0 +1,16 @@
+D:\BankingSystem\BankingSystem\UnitTest\bin\Debug\netcoreapp2.0\xunit.runner.visualstudio.dotnetcore.testadapter.dll
+D:\BankingSystem\BankingSystem\UnitTest\bin\Debug\netcoreapp2.0\xunit.runner.reporters.netcoreapp10.dll
+D:\BankingSystem\BankingSystem\UnitTest\bin\Debug\netcoreapp2.0\xunit.runner.utility.netcoreapp10.dll
+D:\BankingSystem\BankingSystem\UnitTest\bin\Debug\netcoreapp2.0\UnitTest.deps.json
+D:\BankingSystem\BankingSystem\UnitTest\bin\Debug\netcoreapp2.0\UnitTest.runtimeconfig.json
+D:\BankingSystem\BankingSystem\UnitTest\bin\Debug\netcoreapp2.0\UnitTest.runtimeconfig.dev.json
+D:\BankingSystem\BankingSystem\UnitTest\bin\Debug\netcoreapp2.0\UnitTest.dll
+D:\BankingSystem\BankingSystem\UnitTest\bin\Debug\netcoreapp2.0\UnitTest.pdb
+D:\BankingSystem\BankingSystem\UnitTest\bin\Debug\netcoreapp2.0\BankingSystem.dll
+D:\BankingSystem\BankingSystem\UnitTest\bin\Debug\netcoreapp2.0\BankingSystem.pdb
+D:\BankingSystem\BankingSystem\UnitTest\obj\Debug\netcoreapp2.0\UnitTest.csprojResolveAssemblyReference.cache
+D:\BankingSystem\BankingSystem\UnitTest\obj\Debug\netcoreapp2.0\UnitTest.csproj.CoreCompileInputs.cache
+D:\BankingSystem\BankingSystem\UnitTest\obj\Debug\netcoreapp2.0\UnitTest.AssemblyInfoInputs.cache
+D:\BankingSystem\BankingSystem\UnitTest\obj\Debug\netcoreapp2.0\UnitTest.AssemblyInfo.cs
+D:\BankingSystem\BankingSystem\UnitTest\obj\Debug\netcoreapp2.0\UnitTest.dll
+D:\BankingSystem\BankingSystem\UnitTest\obj\Debug\netcoreapp2.0\UnitTest.pdb
