@@ -39,12 +39,11 @@
 <script>
     function UserCheck() {
         $("#btnRegister").attr("disabled", "disabled");
-        $("#Status").html("Checking...");
         $.ajax({
             type: 'POST',
             data: {
                 LoginName: $("#LoginName").val()
-            },
+            },  
             url: '@Url.Action("CheckLogInName", "Users")',
             success: function (data) {
                 if (data) {

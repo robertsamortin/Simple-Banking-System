@@ -168,6 +168,9 @@
                     if (Amount == "") {
                         alert('Please enter valid amount');
                     }
+                    else if (iNum < 0) {
+                        alert('You cannot deposit negative amount.');
+                    }
                     else
                     {
                         var c = confirm('You are about to deposit the amount of ' + iNum + '. \nContinue?');
@@ -217,6 +220,9 @@
                     }
                     else if (parseFloat(Amount) > @Balance) {
                         alert('You cannot withdraw that is greater than your available balance');
+                    }
+                    else if (parseFloat(Amount) < 0) {
+                        alert('You cannot withdraw negative amount.');
                     }
                     else
                     {
@@ -277,6 +283,9 @@
                     }
                     else if (toAccntNo == acctNo) {
                         alert('You cannot transfer fund to your own account.');
+                    }
+                    else if (parseFloat(Amount) < 0) {
+                        alert('You cannot transfer negative amount.');
                     }
                     else
                     {

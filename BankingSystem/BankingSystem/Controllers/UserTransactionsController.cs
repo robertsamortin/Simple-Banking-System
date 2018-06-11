@@ -32,7 +32,7 @@ namespace BankingSystem.Controllers
                 var item = _repo.GetUserTransactionsByAccountNumber(AccountNumber);
                 //var userTrans = users.GetUserTransactionsByAccountNumber(AccountNumber);
                 var userTrans = PagingList.Create(item, 10, page);
-                if (userTrans.Count == 0)
+                if (userTrans.Count == 1)
                     ModelState.AddModelError("Info", "No Current Record Found.");
 
                 userTrans.RouteValue = new RouteValueDictionary {
