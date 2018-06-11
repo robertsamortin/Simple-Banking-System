@@ -1,7 +1,7 @@
 {
   "runtimeTarget": {
     "name": ".NETCoreApp,Version=v2.0",
-    "signature": "7974f567b8cbfe3e301fe455cab2c34f1b809b38"
+    "signature": "dab26b9bf842e7ce87b112aa266e45a7aa027ba0"
   },
   "compilationOptions": {
     "defines": [
@@ -23,7 +23,9 @@
     ".NETCoreApp,Version=v2.0": {
       "BankingSystem/1.0.0": {
         "dependencies": {
+          "FluentAssertions": "4.19.2",
           "Microsoft.AspNetCore.All": "2.0.5",
+          "Microsoft.AspNetCore.TestHost": "2.0.0",
           "Microsoft.NETCore.App": "2.0.0",
           "Moq": "4.8.3",
           "ReflectionIT.Mvc.Paging": "3.0.0"
@@ -53,6 +55,20 @@
         },
         "compile": {
           "lib/netstandard1.5/Castle.Core.dll": {}
+        }
+      },
+      "FluentAssertions/4.19.2": {
+        "dependencies": {
+          "NETStandard.Library": "2.0.0",
+          "System.Reflection.TypeExtensions": "4.3.0"
+        },
+        "runtime": {
+          "lib/netstandard1.3/FluentAssertions.Core.dll": {},
+          "lib/netstandard1.3/FluentAssertions.dll": {}
+        },
+        "compile": {
+          "lib/netstandard1.3/FluentAssertions.Core.dll": {},
+          "lib/netstandard1.3/FluentAssertions.dll": {}
         }
       },
       "Libuv/1.10.0": {
@@ -1350,6 +1366,17 @@
         },
         "compile": {
           "lib/netstandard2.0/Microsoft.AspNetCore.StaticFiles.dll": {}
+        }
+      },
+      "Microsoft.AspNetCore.TestHost/2.0.0": {
+        "dependencies": {
+          "Microsoft.AspNetCore.Hosting": "2.0.1"
+        },
+        "runtime": {
+          "lib/netstandard2.0/Microsoft.AspNetCore.TestHost.dll": {}
+        },
+        "compile": {
+          "lib/netstandard2.0/Microsoft.AspNetCore.TestHost.dll": {}
         }
       },
       "Microsoft.AspNetCore.WebSockets/2.0.1": {
@@ -4099,6 +4126,13 @@
       "path": "castle.core/4.3.0",
       "hashPath": "castle.core.4.3.0.nupkg.sha512"
     },
+    "FluentAssertions/4.19.2": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-RLp96ucizCjVWpUUX3IY0SQpJ/bFrTFF/F/0QNTZGxp3Clp5Nw6N5jQ8YjBZeDvx9D9IKWts12dvkmPZL0LzpQ==",
+      "path": "fluentassertions/4.19.2",
+      "hashPath": "fluentassertions.4.19.2.nupkg.sha512"
+    },
     "Libuv/1.10.0": {
       "type": "package",
       "serviceable": true,
@@ -4700,6 +4734,13 @@
       "sha512": "sha512-F5qVFsyKsVWKS2tgnJ8MVXkc4FNt6NMybRl7gsZw90G7rhscu4M9k2rW0sEtaUS2ZyKu0ObMU2BVu8OjPCUZjQ==",
       "path": "microsoft.aspnetcore.staticfiles/2.0.1",
       "hashPath": "microsoft.aspnetcore.staticfiles.2.0.1.nupkg.sha512"
+    },
+    "Microsoft.AspNetCore.TestHost/2.0.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-TgOj8I2OX7INrk9nZELlviFwFtEsxysG2T0RmNmMP5Jo4nuEGMj6VNUUTsHcfaUppyb0BpbmUFsY36fi+QQBUg==",
+      "path": "microsoft.aspnetcore.testhost/2.0.0",
+      "hashPath": "microsoft.aspnetcore.testhost.2.0.0.nupkg.sha512"
     },
     "Microsoft.AspNetCore.WebSockets/2.0.1": {
       "type": "package",

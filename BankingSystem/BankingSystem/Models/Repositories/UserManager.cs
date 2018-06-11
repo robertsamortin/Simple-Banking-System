@@ -8,14 +8,14 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
-namespace BankingSystem
+namespace BankingSystem.Models.Repositories
 {
     public class UserManager : IUserManager
     {
-        UsersDataAccess users = new UsersDataAccess();
-
-        public UserManager()
+        private IUsersRepository _repo;
+        public UserManager(IUsersRepository repo)
         {
+            _repo = repo;
         }
 
         public Users GetCurrentUser(HttpContext httpContext)
@@ -25,7 +25,7 @@ namespace BankingSystem
             if (currentUserId == null)
                 return null;
 
-            return users.GetUserByAccountNumber(currentUserId);
+            return _repo.GetUserByAccountNumber(currentUserId);
         }
 
         public string GetCurrentUserId(HttpContext httpContext)
@@ -59,7 +59,7 @@ namespace BankingSystem
 
         public Users Validate(string LoginName, string Password)
         {
-            var user = users.UserLogin(LoginName, Password);
+            var user = _repo.UserLogin(LoginName, Password);
 
             return user;
         }

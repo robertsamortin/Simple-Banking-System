@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using BankingSystem.Models;
+using BankingSystem.Models.Repositories;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -12,11 +13,13 @@ namespace BankingSystem.Controllers
     public class UsersController : Controller
     {
         private IUserManager _userManager;
-        UsersDataAccess users = new UsersDataAccess();
+        private IUsersRepository _repo;
+        //UsersDataAccess users = new UsersDataAccess();
 
-        public UsersController(IUserManager userManager)
+        public UsersController(IUserManager userManager, IUsersRepository repo)
         {
             _userManager = userManager;
+            _repo = repo;
         }
 
         public IActionResult Register()
@@ -34,7 +37,7 @@ namespace BankingSystem.Controllers
                 usr.AccountNumber = GenerateAccountNumber(15);
                 usr.Balance = 0;
                 usr.CreatedDate = DateTime.Now;
-                users.AddUser(usr);
+                _repo.AddUser(usr);
                 return RedirectToAction("Index");
             }
             return View(usr);
@@ -97,7 +100,7 @@ namespace BankingSystem.Controllers
         //CHEck account no if existing
         public bool CheckAccount(string AccountNumber)
         {
-            var userTrans = users.GetUserByAccountNumber(AccountNumber);
+            var userTrans = _repo.GetUserByAccountNumber(AccountNumber);
             if (userTrans.AccountNumber != null)
                 return true;
             return false;
@@ -106,7 +109,7 @@ namespace BankingSystem.Controllers
         //CHEck username if existing
         public bool CheckLogInName(string LoginName)
         {
-            var userTrans = users.CheckLoginName(LoginName);
+            var userTrans = _repo.CheckLoginName(LoginName);
             if (userTrans)
                 return true;
             return false;

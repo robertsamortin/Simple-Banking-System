@@ -7,6 +7,8 @@ using BankingSystem.Controllers;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using BankingSystem;
+using BankingSystem.Models.Repositories;
+using FluentAssertions;
 
 namespace UnitTest
 {
@@ -15,27 +17,44 @@ namespace UnitTest
     {
         
         [Fact]
-        public void CheckAccount_ReturnsNotFound_WhenAccountNumberDoesNotExist()
+        public void Register_ReturnsRedirect_WhenRegistrationIsSuccess()
         {
             // Arrange
-            var controller = new UsersController(new UserManager());
+            var controller = new UsersController(new UserManager(new UsersRepository()), new UsersRepository());
             var newUser = new Users
             {
-                AccountNumber = "123456789012345",
                 LoginName = "robert",
-                Password = "robert123",
-                Balance = 0,
-                CreatedDate = DateTime.Now
+                Password = "robert123"
             };
 
             // Act
             var result =  controller.Register(newUser);
 
             // Assert
-            var okResult = result.ToString();
-            //var okResult = result.BeOfType<CreatedAtActionResult>().Subject;
-            //var person = okResult.Value.Should().BeAssignableTo<Users>().Subject;
-          //  person.Id.Should().Be(51);
+           
+            var redirectToActionResult = Assert.IsType<RedirectToActionResult>(result);
+            Assert.Null(redirectToActionResult.ControllerName);
+            Assert.Equal("Index", redirectToActionResult.ActionName);
+        }
+
+        [Fact]
+        public void Register_ReturnsBadRequestResult_WhenModelStateIsInvalid()
+        {
+            // Arrange
+            var controller = new UsersController(new UserManager(new UsersRepository()), new UsersRepository());
+            controller.ModelState.AddModelError("LoginName", "Required");
+            var newUser = new Users
+            {
+                LoginName = "",
+                Password = "robert123"
+            };
+
+            // Act
+            var result = controller.Register(newUser);
+
+            // Assert
+            var badRequestResult = Assert.IsType<ViewResult>(result);
+            Assert.True(string.IsNullOrEmpty(badRequestResult.ViewName));
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿
 @using ReflectionIT.Mvc.Paging;
-
+@using BankingSystem.Models.Repositories
 @model PagingList<UserTransactions>
 @inject IUserManager UserManager
 @{
@@ -21,146 +21,139 @@
     LoginName = UserManager.GetCurrentUser(this.Context).LoginName;
     Balance = UserManager.GetCurrentUser(this.Context).Balance.ToString() ?? "0.00";
     bal = double.Parse(Balance);
-    
-}
-else
-{
-    ID = "0.00";
-    AccountNumber = "";
-    LoginName = "";
-    Balance = "0";
-}
-<div>
 
-    <h5>Account Number: <strong>@AccountNumber</strong></h5>
-    <h5>Current Balance: <strong>@String.Format("{0:N2}", bal)</strong></h5>
 
-</div>
-<hr />
-<div>
+    <div>
 
-    <button onclick="ShowPopUpDep()" type="button" class="btn btn-primary btn-md">Deposit</button>
-    <button onclick="ShowPopUpWith()" @(Model.FirstOrDefault().Balance == 0 ? "disabled" : "") type="button" class="btn btn-primary btn-md" asp-controller="Users" asp-action="Login">Withdrawal</button>
-    <button onclick="ShowPopUpFund()" @(Model.FirstOrDefault().Balance == 0 ? "disabled" : "") type="button" class="btn btn-primary btn-md" asp-controller="Users" asp-action="Login">Fund Transfer</button>
-</div>
-
-<h4><strong>TRANSACTION HISTORY</strong></h4>
-<hr />
-
-@*DEPOSIT*@
-<div id="popDeposit" class="col-sm-12" hidden title="Deposit">
-    <div class="form-group">
-        <label>Available Balance: </label>
-        <br />
-        <label style="font-size:20px">@String.Format("{0:N2}", bal)</label>
+        <h5>Account Number: <strong>@AccountNumber</strong></h5>
+        <h5>Current Balance: <strong>@String.Format("{0:N2}", bal)</strong></h5>
 
     </div>
-    <div class="form-group">
-        <label>Enter Amount:</label>
-        <input class="form-control" id="DepAmount" type="number">
+    <hr />
+    <div>
+
+        <button onclick="ShowPopUpDep()" type="button" class="btn btn-primary btn-md">Deposit</button>
+        <button onclick="ShowPopUpWith()" @(Model.FirstOrDefault().Balance == 0 ? "disabled" : "") type="button" class="btn btn-primary btn-md" asp-controller="Users" asp-action="Login">Withdrawal</button>
+        <button onclick="ShowPopUpFund()" @(Model.FirstOrDefault().Balance == 0 ? "disabled" : "") type="button" class="btn btn-primary btn-md" asp-controller="Users" asp-action="Login">Fund Transfer</button>
     </div>
-</div>
 
-@*WITHDRAWAL*@
-<div id="popWithdrawal" class="col-sm-12" hidden title="Withdrawal">
-    <div class="form-group">
-        <label>Available Balance: </label>
-        <br />
-        <label style="font-size:20px">@String.Format("{0:N2}", bal)</label>
+    <h4><strong>TRANSACTION HISTORY</strong></h4>
+    <hr />
 
+    @*DEPOSIT*@
+    <div id="popDeposit" class="col-sm-12" hidden title="Deposit">
+        <div class="form-group">
+            <label>Available Balance: </label>
+            <br />
+            <label style="font-size:20px">@String.Format("{0:N2}", bal)</label>
+
+        </div>
+        <div class="form-group">
+            <label>Enter Amount:</label>
+            <input class="form-control" id="DepAmount" type="number">
+        </div>
     </div>
-    <div class="form-group">
-        <label>Enter Amount:</label>
-        <input class="form-control" id="WithAmount" type="number">
+
+    @*WITHDRAWAL*@
+    <div id="popWithdrawal" class="col-sm-12" hidden title="Withdrawal">
+        <div class="form-group">
+            <label>Available Balance: </label>
+            <br />
+            <label style="font-size:20px">@String.Format("{0:N2}", bal)</label>
+
+        </div>
+        <div class="form-group">
+            <label>Enter Amount:</label>
+            <input class="form-control" id="WithAmount" type="number">
+        </div>
     </div>
-</div>
 
-@*FUND TRANSFER*@
-<div id="popFundTransfer" class="col-sm-12" hidden title="Fund Transfer">
-    <div class="form-group">
-        <label>Available Balance: </label>
-        <br />
-        <label style="font-size:20px">@String.Format("{0:N2}", bal)</label>
+    @*FUND TRANSFER*@
+    <div id="popFundTransfer" class="col-sm-12" hidden title="Fund Transfer">
+        <div class="form-group">
+            <label>Available Balance: </label>
+            <br />
+            <label style="font-size:20px">@String.Format("{0:N2}", bal)</label>
 
+        </div>
+        <div class="form-group">
+            <label>Enter Amount:</label>
+            <input class="form-control" id="TransferAmount" type="number">
+        </div>
+        <div class="form-group">
+            <label>Transfer to Account Number:</label>
+            <input class="form-control" id="TransferAccount">
+            @*<input class="form-control" id="tAccountNo">*@
+        </div>
     </div>
-    <div class="form-group">
-        <label>Enter Amount:</label>
-        <input class="form-control" id="TransferAmount" type="number">
-    </div>
-    <div class="form-group">
-        <label>Transfer to Account Number:</label>
-        <input class="form-control" id="TransferAccount">
-        @*<input class="form-control" id="tAccountNo">*@
-    </div>
-</div>
 
-<div class="row">
-    <div class="col-md-12">
-        @{
-            if (Model.FirstOrDefault().Balance == 0)
-            {
-                <strong>@Html.ValidationMessage("Info")</strong>
-            }
-            else
-            {   
-                
-                <nav>
-                    @await this.Component.InvokeAsync("Pager", new { pagingList = this.Model})
-                </nav>
-                <table class="table table-striped">
-                    <!-- Table header -->
-                    <thead>
-                        <tr>
+    <div class="row">
+        <div class="col-md-12">
+            @{
+                if (Model.FirstOrDefault().Balance == 0)
+                {
+                    <strong>@Html.ValidationMessage("Info")</strong>
+                }
+                else
+                {
 
-                            <th hidden>ID</th>
-                            <th>Date/Time</th>
-                            <th>Type</th>
-                            <th class="text-right">Amount</th>
-                            <th class="text-right">Running Balance</th>
-                            <th class="text-center">Transacted By</th>
-                        </tr>
-                    </thead>
-                    <!-- Table body -->
-                    <tbody>
-
-                        @foreach (var item in @Model)
-                        {
+                    <nav>
+                        @await this.Component.InvokeAsync("Pager", new { pagingList = this.Model })
+                    </nav>
+                    <table class="table table-striped">
+                        <!-- Table header -->
+                        <thead>
                             <tr>
-                                <td hidden>@item.ID.ToString()</td>
-                                <td align="left">@item.TransDate.ToString()</td>
-                                <td align="left">@item.TransType.ToString()</td>
-                                <td align="right">@String.Format("{0:#,###.00;(#,###.00);0}", @item.Amount)</td>
-                                <td align="right">@String.Format("{0:#,###.00;(#,###.00);0}", @item.RunningBalance)</td>
-                                <td align="center">@item.TransBy.ToString()</td>
-                            </tr>
-                        }
 
-                    </tbody>
-                    <!-- Table footer -->
-                    <tfoot>
-                        <tr>
-                            <td hidden></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                        </tr>
-                    </tfoot>
-                </table>
-                <nav>
-                    <vc:pager paging-list="@Model"/>
-                </nav>
+                                <th hidden>ID</th>
+                                <th>Date/Time</th>
+                                <th>Type</th>
+                                <th class="text-right">Amount</th>
+                                <th class="text-right">Running Balance</th>
+                                <th class="text-center">Transacted By</th>
+                            </tr>
+                        </thead>
+                        <!-- Table body -->
+                        <tbody>
+
+                            @foreach (var item in @Model)
+                            {
+                                <tr>
+                                    <td hidden>@item.ID.ToString()</td>
+                                    <td align="left">@item.TransDate.ToString()</td>
+                                    <td align="left">@item.TransType.ToString()</td>
+                                    <td align="right">@String.Format("{0:#,###.00;(#,###.00);0}", @item.Amount)</td>
+                                    <td align="right">@String.Format("{0:#,###.00;(#,###.00);0}", @item.RunningBalance)</td>
+                                    <td align="center">@item.TransBy.ToString()</td>
+                                </tr>
+                            }
+
+                        </tbody>
+                        <!-- Table footer -->
+                        <tfoot>
+                            <tr>
+                                <td hidden></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                    <nav>
+                        <vc:pager paging-list="@Model" />
+                    </nav>
+                }
             }
-        }
+
+
+        </div>
 
 
     </div>
 
 
-</div>
-
-
-<script>
+    <script>
     @*DEPOSIT *@
     function ShowPopUpDep() {
         $('#popDeposit').dialog({
@@ -340,4 +333,14 @@ else
         });
 
         }
-</script>
+    </script>
+
+}
+else
+{
+    Context.Response.Redirect(Url.Action("Login", "Users"));
+    ID = "0.00";
+    AccountNumber = "";
+    LoginName = "";
+    Balance = "0";
+}

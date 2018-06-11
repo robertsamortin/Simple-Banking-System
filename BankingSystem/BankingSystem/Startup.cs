@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using BankingSystem.Models;
+using BankingSystem.Models.Repositories;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -34,11 +35,11 @@ namespace BankingSystem
              );
 
             services.AddTransient<IUserManager, UserManager>();
+            services.AddTransient<IUsersRepository, UsersRepository>();
 
             services.AddSingleton<ITempDataProvider, CookieTempDataProvider>();
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddMvc();
-            services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
 
         }
 

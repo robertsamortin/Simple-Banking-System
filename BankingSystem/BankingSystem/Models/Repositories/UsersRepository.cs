@@ -5,84 +5,60 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace BankingSystem.Models
+namespace BankingSystem.Models.Repositories
 {
-    public class UsersDataAccess
+    public class UsersRepository : IUsersRepository
     {
-        string connectionString = "Server =.\\SQLEXPRESS01;Database=Banking;Integrated Security = true;";  
-  
-        //register new user    
-        public void AddUser(Users usr)  
-        {  
-            using (SqlConnection con = new SqlConnection(connectionString))  
-            {  
-                SqlCommand cmd = new SqlCommand("spUserInsert", con);  
-                cmd.CommandType = CommandType.StoredProcedure;  
-                
-                cmd.Parameters.AddWithValue("@LoginName", usr.LoginName);  
-                cmd.Parameters.AddWithValue("@AccountNumber", usr.AccountNumber);  
-                cmd.Parameters.AddWithValue("@Password", usr.Password);  
-                cmd.Parameters.AddWithValue("@Balance", usr.Balance);
-                cmd.Parameters.AddWithValue("@CreatedDate", usr.CreatedDate);
+        //Change connection to the database
+        string connectionString = "Server =.\\SQLEXPRESS01;Database=Banking;Integrated Security = true;";
 
-                con.Open();  
-                cmd.ExecuteNonQuery();  
-                con.Close();  
-            }  
-        }  
-  
-        //update by user id  
-        public void UpdateUser(Users usr)  
-        {  
-            using (SqlConnection con = new SqlConnection(connectionString))  
-            {  
-                SqlCommand cmd = new SqlCommand("spUpdateEmployee", con);  
+        public void AddUser(Users usr)
+        {
+            using (SqlConnection con = new SqlConnection(connectionString))
+            {
+                SqlCommand cmd = new SqlCommand("spUserInsert", con);
                 cmd.CommandType = CommandType.StoredProcedure;
 
-                cmd.Parameters.AddWithValue("@ID", usr.ID);
                 cmd.Parameters.AddWithValue("@LoginName", usr.LoginName);
                 cmd.Parameters.AddWithValue("@AccountNumber", usr.AccountNumber);
                 cmd.Parameters.AddWithValue("@Password", usr.Password);
                 cmd.Parameters.AddWithValue("@Balance", usr.Balance);
                 cmd.Parameters.AddWithValue("@CreatedDate", usr.CreatedDate);
 
-                con.Open();  
-                cmd.ExecuteNonQuery();  
-                con.Close();  
-            }  
+                con.Open();
+                cmd.ExecuteNonQuery();
+                con.Close();
+            }
         }
 
-        //Login  
-        public Users UserLogin(string LoginName, string Password)
+        public bool CheckLoginName(string LoginName)
         {
-            Users usr = new Users();
-
+            bool result = false;
             using (SqlConnection con = new SqlConnection(connectionString))
             {
-                SqlCommand cmd = new SqlCommand("spUserLogin", con);
+                SqlCommand cmd = new SqlCommand("spUserCheckLoginName", con);
                 cmd.CommandType = CommandType.StoredProcedure;
 
                 cmd.Parameters.AddWithValue("@LoginName", LoginName);
-                cmd.Parameters.AddWithValue("@Password", Password);
 
                 con.Open();
                 SqlDataReader rdr = cmd.ExecuteReader();
 
-                if (rdr.Read())
+                if (rdr.HasRows)
                 {
-                    usr.ID = Convert.ToInt32(rdr["ID"]);
-                    usr.LoginName = rdr["LoginName"].ToString();
-                    usr.AccountNumber = rdr["AccountNumber"].ToString();
-                    usr.Password = rdr["Password"].ToString();
-                    usr.Balance = double.Parse(rdr["Balance"].ToString());
-                    usr.CreatedDate = DateTime.Parse(rdr["CreatedDate"].ToString());
+                    result = true;
                 }
+                else
+                {
+                    result = false;
+                }
+
+
                 con.Close();
             }
-            return usr;
+            return result;
         }
-        
-        //get user by account number  
+
         public Users GetUserByAccountNumber(string AccountNumber)
         {
             Users usr = new Users();
@@ -111,37 +87,6 @@ namespace BankingSystem.Models
             return usr;
         }
 
-        //check loginname if exist  
-        public bool CheckLoginName(string LoginName)
-        {
-            bool result = false;
-            using (SqlConnection con = new SqlConnection(connectionString))
-            {
-                SqlCommand cmd = new SqlCommand("spUserCheckLoginName", con);
-                cmd.CommandType = CommandType.StoredProcedure;
-
-                cmd.Parameters.AddWithValue("@LoginName", LoginName);
-
-                con.Open();
-                SqlDataReader rdr = cmd.ExecuteReader();
-
-                if (rdr.HasRows)
-                {
-                    result = true;
-                }
-                else
-                {
-                    result = false;
-                }
-                    
-                
-                con.Close();
-            }
-            return result;
-        }
-
-
-        //get users transactions by account number
         public List<UserTransactions> GetUserTransactionsByAccountNumber(string AccountNumber)
         {
             List<UserTransactions> lstTrans = new List<UserTransactions>();
@@ -176,7 +121,6 @@ namespace BankingSystem.Models
             return lstTrans;
         }
 
-        //insert users transactions    
         public void InsertUserTransactions(UserTransactions usrTrans)
         {
             using (SqlConnection con = new SqlConnection(connectionString))
@@ -194,6 +138,35 @@ namespace BankingSystem.Models
                 cmd.ExecuteNonQuery();
                 con.Close();
             }
+        }
+
+        public Users UserLogin(string LoginName, string Password)
+        {
+            Users usr = new Users();
+
+            using (SqlConnection con = new SqlConnection(connectionString))
+            {
+                SqlCommand cmd = new SqlCommand("spUserLogin", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+
+                cmd.Parameters.AddWithValue("@LoginName", LoginName);
+                cmd.Parameters.AddWithValue("@Password", Password);
+
+                con.Open();
+                SqlDataReader rdr = cmd.ExecuteReader();
+
+                if (rdr.Read())
+                {
+                    usr.ID = Convert.ToInt32(rdr["ID"]);
+                    usr.LoginName = rdr["LoginName"].ToString();
+                    usr.AccountNumber = rdr["AccountNumber"].ToString();
+                    usr.Password = rdr["Password"].ToString();
+                    usr.Balance = double.Parse(rdr["Balance"].ToString());
+                    usr.CreatedDate = DateTime.Parse(rdr["CreatedDate"].ToString());
+                }
+                con.Close();
+            }
+            return usr;
         }
     }
 }
