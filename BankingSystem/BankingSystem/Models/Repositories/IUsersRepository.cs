@@ -13,5 +13,6 @@ namespace BankingSystem.Models.Repositories
         bool CheckLoginName(string LoginName);
         List<UserTransactions> GetUserTransactionsByAccountNumber(string AccountNumber);
         void InsertUserTransactions(UserTransactions usrTrans);
+        double CheckBalance(string AccountNumber);
     }
 }

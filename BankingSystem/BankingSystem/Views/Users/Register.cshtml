@@ -16,7 +16,7 @@
             <div class="form-group">
                 <label asp-for="LoginName" class="control-label"></label>
                 <input asp-for="LoginName" class="form-control" id="LoginName" onchange="UserCheck()" />
-                <span asp-validation-for="LoginName" class="text-danger"></span>
+                <span asp-validation-for="LoginName" class="text-danger" id="LoginNameVal"></span>
                 <span id="Status" class="text-danger"></span>
             </div>
             
@@ -39,27 +39,38 @@
 <script>
     function UserCheck() {
         $("#btnRegister").attr("disabled", "disabled");
-        $.ajax({
+        var lName = $("#LoginName").val();
+
+        if (lName == "") {
+            $("#Status").hide();
+        }
+        else {
+            $("#Status").show();
+            $.ajax({
             type: 'POST',
             data: {
-                LoginName: $("#LoginName").val()
-            },  
+                LoginName: lName
+            },
             url: '@Url.Action("CheckLogInName", "Users")',
             success: function (data) {
-                if (data) {
-                    $("#Status").html('<font color="Red">That name is taken.Try Another.</font>');
-                    $("#LoginName").css("border-color", "Red");
-                    $("#btnRegister").attr("disabled", "disabled");
-                }
-                else {
-                   
-                    $("#Status").html('<font color="Green">Available !. you can take it.</font>');
-                    $("#LoginName").css("border-color", "Green");
-                    $("#btnRegister").removeAttr("disabled");
+                if (LoginName != "") {
+                    if (data) {
+                        $("#Status").html('<font color="Red">That name is taken.Try Another.</font>');
+                        $("#LoginName").css("border-color", "Red");
+                        $("#btnRegister").attr("disabled", "disabled");
+                    }
+
+                    else {
+                        $("#Status").html('<font color="Green">Available !. you can take it.</font>');
+                        $("#LoginName").css("border-color", "Green");
+                        $("#btnRegister").removeAttr("disabled");
+                    }
                 }
             }
         });
-        
+        }
+
+
     }
 </script>
 

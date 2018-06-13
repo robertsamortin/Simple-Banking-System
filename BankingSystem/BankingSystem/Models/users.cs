@@ -10,9 +10,9 @@ namespace BankingSystem.Models
     {
         public int ID { get; set; }
         public string AccountNumber { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Login Name is required")]
         public string LoginName { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Password is required")]
         [DataType(DataType.Password)]
         public string Password { get; set; }
         public double Balance { get; set; }

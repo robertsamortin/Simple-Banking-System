@@ -11,23 +11,40 @@ namespace BankingSystem.Models.Repositories
     {
         //Change connection to the database
         string connectionString = "Server =.\\SQLEXPRESS01;Database=Banking;Integrated Security = true;";
+        SqlTransaction sqlTrans = null;
 
         public void AddUser(Users usr)
         {
             using (SqlConnection con = new SqlConnection(connectionString))
             {
-                SqlCommand cmd = new SqlCommand("spUserInsert", con);
-                cmd.CommandType = CommandType.StoredProcedure;
+                try
+                {
+                    con.Open();
+                    sqlTrans = con.BeginTransaction();
+                    SqlCommand cmd = new SqlCommand("spUserInsert", con, sqlTrans);
+                    cmd.CommandType = CommandType.StoredProcedure;
 
-                cmd.Parameters.AddWithValue("@LoginName", usr.LoginName);
-                cmd.Parameters.AddWithValue("@AccountNumber", usr.AccountNumber);
-                cmd.Parameters.AddWithValue("@Password", usr.Password);
-                cmd.Parameters.AddWithValue("@Balance", usr.Balance);
-                cmd.Parameters.AddWithValue("@CreatedDate", usr.CreatedDate);
+                    cmd.Parameters.AddWithValue("@LoginName", usr.LoginName);
+                    cmd.Parameters.AddWithValue("@AccountNumber", usr.AccountNumber);
+                    cmd.Parameters.AddWithValue("@Password", usr.Password);
+                    cmd.Parameters.AddWithValue("@Balance", usr.Balance);
+                    cmd.Parameters.AddWithValue("@CreatedDate", usr.CreatedDate);
 
-                con.Open();
-                cmd.ExecuteNonQuery();
-                con.Close();
+                    cmd.ExecuteNonQuery();
+                    sqlTrans.Commit();
+                }
+                catch
+                {
+                    if (sqlTrans != null)
+                    {
+                        sqlTrans.Rollback();
+                    }
+                }
+                finally
+                {
+                    con.Close();
+                }
+                
             }
         }
 
@@ -123,20 +140,36 @@ namespace BankingSystem.Models.Repositories
 
         public void InsertUserTransactions(UserTransactions usrTrans)
         {
+
             using (SqlConnection con = new SqlConnection(connectionString))
             {
-                SqlCommand cmd = new SqlCommand("spUserTransactionsInsert", con);
-                cmd.CommandType = CommandType.StoredProcedure;
+                try
+                {
+                    con.Open();
+                    sqlTrans = con.BeginTransaction();
+                    SqlCommand cmd = new SqlCommand("spUserTransactionsInsert", con, sqlTrans);
+                    cmd.CommandType = CommandType.StoredProcedure;
 
-                cmd.Parameters.AddWithValue("@AccountNumber", usrTrans.AccountNumber);
-                cmd.Parameters.AddWithValue("@Amount", usrTrans.Amount);
-                cmd.Parameters.AddWithValue("@TransType", usrTrans.TransType);
-                cmd.Parameters.AddWithValue("@TransDate", usrTrans.TransDate);
-                cmd.Parameters.AddWithValue("@TransBy", usrTrans.TransBy);
+                    cmd.Parameters.AddWithValue("@AccountNumber", usrTrans.AccountNumber);
+                    cmd.Parameters.AddWithValue("@Amount", usrTrans.Amount);
+                    cmd.Parameters.AddWithValue("@TransType", usrTrans.TransType);
+                    cmd.Parameters.AddWithValue("@TransDate", usrTrans.TransDate);
+                    cmd.Parameters.AddWithValue("@TransBy", usrTrans.TransBy);
 
-                con.Open();
-                cmd.ExecuteNonQuery();
-                con.Close();
+                    cmd.ExecuteNonQuery();
+                    sqlTrans.Commit();
+                }
+                catch
+                {
+                    if (sqlTrans != null)
+                    {
+                        sqlTrans.Rollback();
+                    }
+                }
+                finally
+                {
+                    con.Close();
+                }
             }
         }
 
@@ -167,6 +200,33 @@ namespace BankingSystem.Models.Repositories
                 con.Close();
             }
             return usr;
+        }
+
+        public double CheckBalance(string AccountNumber)
+        {
+            double result = 0;
+            using (SqlConnection con = new SqlConnection(connectionString))
+            {
+                SqlCommand cmd = new SqlCommand("spUserCheckBalanceIfEqual", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+
+                cmd.Parameters.AddWithValue("@AccountNumber", AccountNumber);
+
+                con.Open();
+                SqlDataReader rdr = cmd.ExecuteReader();
+                
+                if (rdr.Read())
+                {
+                    result = double.Parse(rdr["Balance"].ToString());
+                }
+                else
+                {
+                    result = 0;
+                }
+
+                con.Close();
+            }
+            return result;
         }
     }
 }

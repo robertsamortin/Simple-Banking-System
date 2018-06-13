@@ -109,6 +109,8 @@ namespace BankingSystem.Controllers
         //CHEck username if existing
         public bool CheckLogInName(string LoginName)
         {
+            if (LoginName == null)
+                return false;
             var userTrans = _repo.CheckLoginName(LoginName);
             if (userTrans)
                 return true;

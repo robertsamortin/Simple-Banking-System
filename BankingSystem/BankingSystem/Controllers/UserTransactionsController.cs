@@ -60,5 +60,11 @@ namespace BankingSystem.Controllers
             }
             return Ok(usrTrans);
         }
+
+        public double CheckBalance(string AccountNumber)
+        {
+            var result = _repo.CheckBalance(AccountNumber);
+            return result;
+        }
     }
 }

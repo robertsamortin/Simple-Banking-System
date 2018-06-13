@@ -45,7 +45,7 @@
         <div class="form-group">
             <label>Available Balance: </label>
             <br />
-            <label style="font-size:20px">@String.Format("{0:N2}", bal)</label>
+            <label style="font-size:20px" id="depBalance">@String.Format("{0:N2}", bal)</label>
 
         </div>
         <div class="form-group">
@@ -59,7 +59,7 @@
         <div class="form-group">
             <label>Available Balance: </label>
             <br />
-            <label style="font-size:20px">@String.Format("{0:N2}", bal)</label>
+            <div style="font-size:20px" id="withBalance">@String.Format("{0:N2}", bal)</div>
 
         </div>
         <div class="form-group">
@@ -73,7 +73,7 @@
         <div class="form-group">
             <label>Available Balance: </label>
             <br />
-            <label style="font-size:20px">@String.Format("{0:N2}", bal)</label>
+            <label style="font-size:20px" id="fundBalance">@String.Format("{0:N2}", bal)</label>
 
         </div>
         <div class="form-group">
@@ -155,14 +155,14 @@
 
     <script>
     @*DEPOSIT *@
-    function ShowPopUpDep() {
+        function ShowPopUpDep() {
+
         $('#popDeposit').dialog({
             modal: true,
             buttons: {
                 "Save": function () {
-
-                    var Amount = $('#DepAmount').val();
                     var acctNo = @AccountNumber;
+                    var Amount = $('#DepAmount').val();
                     var iNum = parseFloat(Amount);
                     var tType = "Deposit";
                     if (Amount == "") {
@@ -173,29 +173,48 @@
                     }
                     else
                     {
-                        var c = confirm('You are about to deposit the amount of ' + iNum + '. \nContinue?');
-                        if (c == true)
-                        {
-                            $.ajax({
-                            type: 'POST',
+                        //GET Balance
+                        $.ajax({
+                            type: 'GET',
                             data: {
-                                Amount: iNum,
-                                AccountNumber: acctNo,
-                                TransBy: acctNo,
-                                TransType: tType
+                                AccountNumber: acctNo
                             },
-                            url: '@Url.Action("InsertTrans", "UserTransactions")'
-                            });
-                            $.ajax({
-                                type: 'GET',
-                                data: {
-                                    AccountNumber: acctNo
-                                },
-                                url: '@Url.Action("Index", "UserTransactions")'
-                                });
-                            location.reload();
-                            //$(this).dialog("close");
-                        }
+                            url: '@Url.Action("CheckBalance", "UserTransactions")',
+                            success: function (data) {
+                                console.log(data);
+                                console.log(@Balance);
+                                if (data != @Balance) {
+                                    alert("Concurrency Violation Encountered");
+                                }
+                                else {
+                                    var c = confirm('You are about to deposit the amount of ' + iNum + '. \nContinue?');
+                                    if (c == true)
+                                    {
+                                        $.ajax({
+                                        type: 'POST',
+                                        data: {
+                                            Amount: iNum,
+                                            AccountNumber: acctNo,
+                                            TransBy: acctNo,
+                                            TransType: tType
+                                        },
+                                        url: '@Url.Action("InsertTrans", "UserTransactions")'
+                                        });
+                                        $.ajax({
+                                            type: 'GET',
+                                            data: {
+                                                AccountNumber: acctNo
+                                            },
+                                            url: '@Url.Action("Index", "UserTransactions")'
+                                            });
+                                        location.reload();
+                                        //$(this).dialog("close");
+                                    }
+
+                                }
+                            }
+                        });
+
                     }
                 },
                 "Cancel": function () {
@@ -226,30 +245,49 @@
                     }
                     else
                     {
-                        var c = confirm('You are about to withdraw the amount of ' + parseFloat(Amount) + '. \nContinue?');
-                            if (c == true)
-                            {
-                                $.ajax({
-                                type: 'POST',
-                                    data: {
-                                        Amount: iNum,
-                                        AccountNumber: acctNo,
-                                        TransBy: acctNo,
-                                        TransType: tType
-                                    },
-                                    url: '@Url.Action("InsertTrans", "UserTransactions")'
-                                });
+                        //GET Balance
+                        $.ajax({
+                            type: 'GET',
+                            data: {
+                                AccountNumber: acctNo
+                            },
+                            url: '@Url.Action("CheckBalance", "UserTransactions")',
+                            success: function (data) {
+                                console.log(data);
+                                console.log(@Balance);
+                                if (data != @Balance) {
+                                    alert("Concurrency Violation Encountered");
+                                }
+                                else {
+                                    var c = confirm('You are about to withdraw the amount of ' + parseFloat(Amount) + '. \nContinue?');
+                                    if (c == true)
+                                    {
+                                        $.ajax({
+                                        type: 'POST',
+                                            data: {
+                                                Amount: iNum,
+                                                AccountNumber: acctNo,
+                                                TransBy: acctNo,
+                                                TransType: tType
+                                            },
+                                            url: '@Url.Action("InsertTrans", "UserTransactions")'
+                                        });
 
-                                $.ajax({
-                                    type: 'GET',
-                                    data: {
-                                        AccountNumber: acctNo
-                                    },
-                                    url: '@Url.Action("Index", "UserTransactions")'
-                                    });
-                                location.reload();
-                                //$(this).dialog("close");
+                                        $.ajax({
+                                            type: 'GET',
+                                            data: {
+                                                AccountNumber: acctNo
+                                            },
+                                            url: '@Url.Action("Index", "UserTransactions")'
+                                            });
+                                        location.reload();
+                                        //$(this).dialog("close");
+                                    }
+
+                                }
                             }
+                        });
+
                     }
                 },
                 "Cancel": function () {
@@ -289,48 +327,66 @@
                     }
                     else
                     {
-                        //CHECK ACCNT NO IF EXIST
                         $.ajax({
                             type: 'GET',
-                            data: { AccountNumber: toAccntNo},
-                            url: '@Url.Action("CheckAccount", "Users")',
+                            data: {
+                                AccountNumber: acctNo
+                            },
+                            url: '@Url.Action("CheckBalance", "UserTransactions")',
                             success: function (data) {
-                                if (data) {
-                                    var c = confirm('Are you about to transfer the amount of ' + parseFloat(Amount) + ' to Account No. ' + toAccntNo + '. \nContinue?');
-                                    if (c == true)
-                                    {
-                                        $.ajax({
-                                        type: 'POST',
-                                        data: {
-                                            Amount: iNum,
-                                            AccountNumber: toAccntNo,
-                                            TransBy: acctNo,
-                                            TransType: tType
-                                        },
-                                        url: '@Url.Action("InsertTrans", "UserTransactions")'
-                                        });
-
-                                        $.ajax({
-                                        type: 'GET',
-                                        data: {
-                                            AccountNumber: acctNo
-                                        },
-                                        url: '@Url.Action("Index", "UserTransactions")'
-                                        });
-                                        location.reload();
-
-                                    }
-
+                                console.log(data);
+                                console.log(@Balance);
+                                if (data != @Balance) {
+                                    alert("Concurrency Violation Encountered");
                                 }
                                 else {
-                                    alert("You have entered invalid Account Number.");
-                                }
-                            },
-                            error: function () {
-                                alert("Someting went wrong.");
-                            }
+                                    //CHECK ACCNT NO IF EXIST
+                                    $.ajax({
+                                        type: 'GET',
+                                        data: { AccountNumber: toAccntNo},
+                                        url: '@Url.Action("CheckAccount", "Users")',
+                                        success: function (data) {
+                                            if (data) {
+                                                var c = confirm('Are you about to transfer the amount of ' + parseFloat(Amount) + ' to Account No. ' + toAccntNo + '. \nContinue?');
+                                                if (c == true)
+                                                {
+                                                    $.ajax({
+                                                    type: 'POST',
+                                                    data: {
+                                                        Amount: iNum,
+                                                        AccountNumber: toAccntNo,
+                                                        TransBy: acctNo,
+                                                        TransType: tType
+                                                    },
+                                                    url: '@Url.Action("InsertTrans", "UserTransactions")'
+                                                    });
 
+                                                    $.ajax({
+                                                    type: 'GET',
+                                                    data: {
+                                                        AccountNumber: acctNo
+                                                    },
+                                                    url: '@Url.Action("Index", "UserTransactions")'
+                                                    });
+                                                    location.reload();
+
+                                                }
+
+                                            }
+                                            else {
+                                                alert("You have entered invalid Account Number.");
+                                            }
+                                        },
+                                        error: function () {
+                                            alert("Someting went wrong.");
+                                        }
+
+                                    });
+
+                                }
+                            }
                         });
+
                         //$(this).dialog("close");
                     }
 
