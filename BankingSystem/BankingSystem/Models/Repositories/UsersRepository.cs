@@ -10,7 +10,7 @@ namespace BankingSystem.Models.Repositories
     public class UsersRepository : IUsersRepository
     {
         //Change connection to the database
-        string connectionString = "Server =.\\SQLEXPRESS01;Database=Banking;Integrated Security = true;";
+        string connectionString = "Server =.\\SQLEXPRESS;Database=Banking;Integrated Security = true;";
         SqlTransaction sqlTrans = null;
 
         public void AddUser(Users usr)
@@ -202,7 +202,7 @@ namespace BankingSystem.Models.Repositories
             return usr;
         }
 
-        public double CheckBalance(string AccountNumber)
+        public bool CheckBalance(string AccountNumber, double CurrBalance)
         {
             double result = 0;
             using (SqlConnection con = new SqlConnection(connectionString))
@@ -223,10 +223,12 @@ namespace BankingSystem.Models.Repositories
                 {
                     result = 0;
                 }
-
+                
                 con.Close();
             }
-            return result;
+            if (result != CurrBalance)
+                return false;
+            return true;
         }
     }
 }

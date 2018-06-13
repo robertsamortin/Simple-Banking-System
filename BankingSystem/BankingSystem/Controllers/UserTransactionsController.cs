@@ -61,9 +61,9 @@ namespace BankingSystem.Controllers
             return Ok(usrTrans);
         }
 
-        public double CheckBalance(string AccountNumber)
+        public bool CheckBalance(string AccountNumber, double CurrBalance)
         {
-            var result = _repo.CheckBalance(AccountNumber);
+            var result = _repo.CheckBalance(AccountNumber, CurrBalance);
             return result;
         }
     }

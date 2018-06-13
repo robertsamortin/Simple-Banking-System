@@ -162,6 +162,7 @@
             buttons: {
                 "Save": function () {
                     var acctNo = @AccountNumber;
+                    var currBalance = @Balance;
                     var Amount = $('#DepAmount').val();
                     var iNum = parseFloat(Amount);
                     var tType = "Deposit";
@@ -177,13 +178,12 @@
                         $.ajax({
                             type: 'GET',
                             data: {
-                                AccountNumber: acctNo
+                                AccountNumber: acctNo,
+                                CurrBalance: currBalance
                             },
                             url: '@Url.Action("CheckBalance", "UserTransactions")',
                             success: function (data) {
-                                console.log(data);
-                                console.log(@Balance);
-                                if (data != @Balance) {
+                                if (!data) {
                                     alert("Concurrency Violation Encountered");
                                 }
                                 else {
@@ -232,6 +232,7 @@
                 "Save": function () {
                     var Amount = $('#WithAmount').val();
                     var acctNo = @AccountNumber;
+                    var currBalance = @Balance;
                     var iNum = parseFloat(Amount) * -1;
                     var tType = "Withdrawal";
                     if (Amount == "") {
@@ -249,13 +250,12 @@
                         $.ajax({
                             type: 'GET',
                             data: {
-                                AccountNumber: acctNo
+                                AccountNumber: acctNo,
+                                CurrBalance: currBalance
                             },
                             url: '@Url.Action("CheckBalance", "UserTransactions")',
                             success: function (data) {
-                                console.log(data);
-                                console.log(@Balance);
-                                if (data != @Balance) {
+                                if (!data) {
                                     alert("Concurrency Violation Encountered");
                                 }
                                 else {
@@ -307,6 +307,7 @@
 
                     var Amount = $('#TransferAmount').val();
                     var acctNo = @AccountNumber;
+                    var currBalance = @Balance;
                     var iNum = parseFloat(Amount) * -1;
 
                     var tType = "Fund Transfer";
@@ -330,13 +331,14 @@
                         $.ajax({
                             type: 'GET',
                             data: {
-                                AccountNumber: acctNo
+                                AccountNumber: acctNo,
+                                CurrBalance: currBalance
                             },
                             url: '@Url.Action("CheckBalance", "UserTransactions")',
                             success: function (data) {
                                 console.log(data);
                                 console.log(@Balance);
-                                if (data != @Balance) {
+                                if (!data) {
                                     alert("Concurrency Violation Encountered");
                                 }
                                 else {

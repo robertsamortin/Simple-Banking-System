@@ -12,31 +12,23 @@ namespace UnitTest
     public class ConcurrencyTest
     {
         [Fact]
-        public void Users_ReturnsTrue_WhenBalancesIsnotEqualToDB()
+        public void Users_ReturnsFalse_WhenBalancesIsnotEqualToDB()
         {
             // Arrange
             var controller = new UserTransactionsController(new UserManager(new UsersRepository()), new UsersRepository());
             var oldUser = new Users
             {
                 AccountNumber = "123456789123456",
-                Balance = 1000
+                Balance = 500
             };
-
-            var newUser = new Users
-            {
-                AccountNumber = "123456789123456",
-                Balance = 5000
-            };
-
+            double CurrBalance = 1000;
             // Act
-            var result = controller.CheckBalance(oldUser.AccountNumber);
-            var result1 = controller.CheckBalance(oldUser.AccountNumber);
+            var result = controller.CheckBalance(oldUser.AccountNumber, CurrBalance);
            
             // Assert
 
-            var okResult = Assert.IsType<double>(result);
-            var okResult1 = Assert.IsType<double>(result1);
-            Assert.Equal(okResult, okResult1);
+            var okResult = Assert.IsType<bool>(result);
+            Assert.False(okResult, "false");
         }
     }
 }
