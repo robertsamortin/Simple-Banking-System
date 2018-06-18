@@ -27,6 +27,15 @@ namespace BankingSystem.Controllers
             return View();
         }
 
+        [HttpGet]
+        public JsonResult UserAlreadyExistsAsync(string LoginName)
+        {
+            var result = _repo.CheckLoginName(LoginName);
+            if (result)
+                return Json(false);
+            return Json(true);
+        }
+
         //Register
         [HttpPost]
         [ValidateAntiForgeryToken]

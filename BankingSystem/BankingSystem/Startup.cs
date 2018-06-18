@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BankingSystem.Middleware;
 using BankingSystem.Models;
 using BankingSystem.Models.Repositories;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -49,7 +50,8 @@ namespace BankingSystem
             if (env.IsDevelopment())
             {
                 app.UseBrowserLink();
-                app.UseDeveloperExceptionPage();
+                //app.UseDeveloperExceptionPage();
+                app.UseExceptionHandler("/Home/Error");
             }
             else
             {

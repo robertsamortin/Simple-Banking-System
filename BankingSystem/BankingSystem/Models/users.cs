@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -10,8 +11,11 @@ namespace BankingSystem.Models
     {
         public int ID { get; set; }
         public string AccountNumber { get; set; }
+
         [Required(ErrorMessage = "Login Name is required")]
+        [Remote("UserAlreadyExistsAsync", "Users", HttpMethod = "GET" , ErrorMessage = "User with this Login Name already exists")]
         public string LoginName { get; set; }
+
         [Required(ErrorMessage = "Password is required")]
         [DataType(DataType.Password)]
         public string Password { get; set; }

@@ -10,7 +10,7 @@ namespace BankingSystem.Models.Repositories
     public class UsersRepository : IUsersRepository
     {
         //Change connection to the database
-        string connectionString = "Server =.\\SQLEXPRESS;Database=Banking;Integrated Security = true;";
+        string connectionString = "Server =.\\SQLEXPRESS01;Database=Banking;Integrated Security = true;";
         SqlTransaction sqlTrans = null;
 
         public void AddUser(Users usr)
@@ -179,27 +179,40 @@ namespace BankingSystem.Models.Repositories
 
             using (SqlConnection con = new SqlConnection(connectionString))
             {
-                SqlCommand cmd = new SqlCommand("spUserLogin", con);
-                cmd.CommandType = CommandType.StoredProcedure;
-
-                cmd.Parameters.AddWithValue("@LoginName", LoginName);
-                cmd.Parameters.AddWithValue("@Password", Password);
-
-                con.Open();
-                SqlDataReader rdr = cmd.ExecuteReader();
-
-                if (rdr.Read())
+                try
                 {
-                    usr.ID = Convert.ToInt32(rdr["ID"]);
-                    usr.LoginName = rdr["LoginName"].ToString();
-                    usr.AccountNumber = rdr["AccountNumber"].ToString();
-                    usr.Password = rdr["Password"].ToString();
-                    usr.Balance = double.Parse(rdr["Balance"].ToString());
-                    usr.CreatedDate = DateTime.Parse(rdr["CreatedDate"].ToString());
+                    SqlCommand cmd = new SqlCommand("spUserLogin", con);
+                    cmd.CommandType = CommandType.StoredProcedure;
+
+                    cmd.Parameters.AddWithValue("@LoginName", LoginName);
+                    cmd.Parameters.AddWithValue("@Password", Password);
+
+                    con.Open();
+                    SqlDataReader rdr = cmd.ExecuteReader();
+
+                    if (rdr.Read())
+                    {
+                        usr.ID = Convert.ToInt32(rdr["ID"]);
+                        usr.LoginName = rdr["LoginName"].ToString();
+                        usr.AccountNumber = rdr["AccountNumber"].ToString();
+                        usr.Password = rdr["Password"].ToString();
+                        usr.Balance = double.Parse(rdr["Balance"].ToString());
+                        usr.CreatedDate = DateTime.Parse(rdr["CreatedDate"].ToString());
+                    }
+                    con.Close();
+                    return usr;
                 }
-                con.Close();
+                catch (Exception ex)
+                {
+                    throw new Exception(ex.Message);
+                }
+                finally
+                {
+                    con.Close();
+                }
+
             }
-            return usr;
+           
         }
 
         public bool CheckBalance(string AccountNumber, double CurrBalance)
@@ -207,28 +220,41 @@ namespace BankingSystem.Models.Repositories
             double result = 0;
             using (SqlConnection con = new SqlConnection(connectionString))
             {
-                SqlCommand cmd = new SqlCommand("spUserCheckBalanceIfEqual", con);
-                cmd.CommandType = CommandType.StoredProcedure;
-
-                cmd.Parameters.AddWithValue("@AccountNumber", AccountNumber);
-
-                con.Open();
-                SqlDataReader rdr = cmd.ExecuteReader();
-                
-                if (rdr.Read())
+                try
                 {
-                    result = double.Parse(rdr["Balance"].ToString());
+                    SqlCommand cmd = new SqlCommand("spUserCheckBalanceIfEqual", con);
+                    cmd.CommandType = CommandType.StoredProcedure;
+
+                    cmd.Parameters.AddWithValue("@AccountNumber", AccountNumber);
+
+                    con.Open();
+                    SqlDataReader rdr = cmd.ExecuteReader();
+
+                    if (rdr.Read())
+                    {
+                        result = double.Parse(rdr["Balance"].ToString());
+                    }
+                    else
+                    {
+                        result = 0;
+                    }
+
+                    //con.Close();
+                    if (result != CurrBalance)
+                        return false;
+                    return true;
                 }
-                else
+                catch(Exception ex)
                 {
-                    result = 0;
+                    throw new Exception(ex.Message);
+                }
+                finally
+                {
+                    con.Close();
                 }
                 
-                con.Close();
             }
-            if (result != CurrBalance)
-                return false;
-            return true;
+            
         }
     }
 }
