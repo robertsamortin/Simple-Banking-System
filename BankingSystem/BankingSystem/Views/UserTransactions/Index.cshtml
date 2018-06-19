@@ -172,6 +172,12 @@
                     else if (iNum < 0) {
                         alert('You cannot deposit negative amount.');
                     }
+                    else if (iNum == 0) {
+                        alert('You cannot deposit zero(0) amount.');
+                    }
+                    else if (iNum > 10000) {
+                        alert('You cannot deposit greater than 10,000.');
+                    }
                     else
                     {
                         //GET Balance
@@ -184,7 +190,7 @@
                             url: '@Url.Action("CheckBalance", "UserTransactions")',
                             success: function (data) {
                                 if (!data) {
-                                    alert("Concurrency Violation Encountered");
+                                    alert("Concurrency violation encountered. \n\nBalanced has been updated.");
                                 }
                                 else {
                                     var c = confirm('You are about to deposit the amount of ' + iNum + '. \nContinue?');
@@ -244,6 +250,13 @@
                     else if (parseFloat(Amount) < 0) {
                         alert('You cannot withdraw negative amount.');
                     }
+                    else if (parseFloat(Amount) == 0) {
+                        alert('You cannot withdraw zero(0) amount.');
+                        alert(parseFloat(10000));
+                    }
+                    else if (parseFloat(Amount) > parseFloat(10000)) {
+                        alert('You cannot withdraw greater than 10,000.');
+                    }
                     else
                     {
                         //GET Balance
@@ -256,7 +269,7 @@
                             url: '@Url.Action("CheckBalance", "UserTransactions")',
                             success: function (data) {
                                 if (!data) {
-                                    alert("Concurrency Violation Encountered");
+                                    alert("Concurrency violation encountered. \n\nBalanced has been updated.");
                                 }
                                 else {
                                     var c = confirm('You are about to withdraw the amount of ' + parseFloat(Amount) + '. \nContinue?');
@@ -326,6 +339,12 @@
                     else if (parseFloat(Amount) < 0) {
                         alert('You cannot transfer negative amount.');
                     }
+                    else if (parseFloat(Amount) == 0) {
+                        alert('You cannot transfer zero(0) amount.');
+                    }
+                    else if (parseFloat(Amount) > 10000) {
+                        alert('You cannot transfer greater than 10,000.');
+                    }
                     else
                     {
                         $.ajax({
@@ -339,7 +358,7 @@
                                 console.log(data);
                                 console.log(@Balance);
                                 if (!data) {
-                                    alert("Concurrency Violation Encountered");
+                                    alert("Concurrency violation encountered. \n\nBalanced has been updated.");
                                 }
                                 else {
                                     //CHECK ACCNT NO IF EXIST

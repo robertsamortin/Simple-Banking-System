@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace BankingSystem
 {
@@ -45,19 +46,24 @@ namespace BankingSystem
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
+            loggerFactory.AddConsole(Configuration.GetSection("Logging"));
+            loggerFactory.AddDebug();
+
+            app.UseStatusCodePagesWithReExecute("/StatusCode/{0}");
+
             if (env.IsDevelopment())
             {
                 app.UseBrowserLink();
-                //app.UseDeveloperExceptionPage();
-                app.UseExceptionHandler("/Home/Error");
+                app.UseDeveloperExceptionPage();
+                //app.UseExceptionHandler("/Home/Error");
             }
             else
             {
                 app.UseExceptionHandler("/Home/Error");
             }
-
+                        
             app.UseStaticFiles();
             app.UseAuthentication();
 

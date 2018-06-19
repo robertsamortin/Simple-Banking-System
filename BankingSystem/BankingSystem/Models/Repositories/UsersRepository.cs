@@ -82,24 +82,43 @@ namespace BankingSystem.Models.Repositories
 
             using (SqlConnection con = new SqlConnection(connectionString))
             {
-                SqlCommand cmd = new SqlCommand("spUserGetByAccountNumber", con);
-                cmd.CommandType = CommandType.StoredProcedure;
-
-                cmd.Parameters.AddWithValue("@AccountNumber", AccountNumber);
-
-                con.Open();
-                SqlDataReader rdr = cmd.ExecuteReader();
-
-                while (rdr.Read())
+                try
                 {
-                    usr.ID = Convert.ToInt32(rdr["ID"]);
-                    usr.LoginName = rdr["LoginName"].ToString();
-                    usr.AccountNumber = rdr["AccountNumber"].ToString();
-                    usr.Password = rdr["Password"].ToString();
-                    usr.Balance = double.Parse(string.Format("{0:N2}", rdr["Balance"].ToString()));
-                    usr.CreatedDate = DateTime.Parse(rdr["CreatedDate"].ToString());
+                    SqlCommand cmd = new SqlCommand("spUserGetByAccountNumber", con);
+                    cmd.CommandType = CommandType.StoredProcedure;
+
+                    cmd.Parameters.AddWithValue("@AccountNumber", AccountNumber);
+
+                    con.Open();
+                    SqlDataReader rdr = cmd.ExecuteReader();
+
+                    while (rdr.Read())
+                    {
+                        usr.ID = Convert.ToInt32(rdr["ID"]);
+                        usr.LoginName = rdr["LoginName"].ToString();
+                        usr.AccountNumber = rdr["AccountNumber"].ToString();
+                        usr.Password = rdr["Password"].ToString();
+                        usr.Balance = double.Parse(string.Format("{0:N2}", rdr["Balance"].ToString()));
+                        usr.CreatedDate = DateTime.Parse(rdr["CreatedDate"].ToString());
+                    }
+                    //con.Close();
                 }
-                con.Close();
+                catch
+                {
+                    return new Users {
+                        ID = 0,
+                        LoginName = null,
+                        AccountNumber = null,
+                        Password = null,
+                        Balance = 0,
+                        CreatedDate = DateTime.Now
+                    };
+                }
+                finally
+                {
+                    con.Close();
+                }
+                
             }
             return usr;
         }
@@ -202,9 +221,17 @@ namespace BankingSystem.Models.Repositories
                     con.Close();
                     return usr;
                 }
-                catch (Exception ex)
+                catch 
                 {
-                    throw new Exception(ex.Message);
+                    return new Users
+                    {
+                        ID = 0,
+                        LoginName = null,
+                        AccountNumber = null,
+                        Password = null,
+                        Balance = 0,
+                        CreatedDate = DateTime.Now
+                    };
                 }
                 finally
                 {

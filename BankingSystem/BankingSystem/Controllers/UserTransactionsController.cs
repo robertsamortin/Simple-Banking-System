@@ -17,7 +17,6 @@ namespace BankingSystem.Controllers
     {
         private IUserManager _userManager;
         private IUsersRepository _repo;
-        //UsersDataAccess users = new UsersDataAccess();
 
         public UserTransactionsController(IUserManager userManager, IUsersRepository repo)
         {
@@ -25,27 +24,49 @@ namespace BankingSystem.Controllers
             _repo = repo;
         }
 
-        public IActionResult Index(string AccountNumber, int page=1)   
+        public IActionResult Index(string AccountNumber, int page = 1)
         {
-            //if (this.User.Identity.IsAuthenticated)
-            //{
-                var item = _repo.GetUserTransactionsByAccountNumber(AccountNumber);
-                //var userTrans = users.GetUserTransactionsByAccountNumber(AccountNumber);
-                var userTrans = PagingList.Create(item, 10, page);
-                if (userTrans.Count == 1)
-                    ModelState.AddModelError("Info", "No Current Record Found.");
+            if (User.Identity.IsAuthenticated)
+            {
+                var accntNumber = _repo.GetUserByAccountNumber(AccountNumber);
+                var currentUser = _userManager.GetCurrentUser(this.HttpContext).AccountNumber;
+                if (accntNumber.AccountNumber == null)
+                {
+                    return StatusCode(404);
+                }
+                else
+                {
+                    var item = _repo.GetUserTransactionsByAccountNumber(AccountNumber);
 
-                userTrans.RouteValue = new RouteValueDictionary {
+                    var recordCount = item.Count();
+                    var noOfRecordsPerPage = 10.0;
+                    var pageNumber = Math.Ceiling(recordCount / noOfRecordsPerPage);
+
+                    if (currentUser != AccountNumber || currentUser == null)
+                    {
+                        return StatusCode(403);
+                    }
+                    if (page > pageNumber)
+                    {
+                        return StatusCode(404);
+                    }
+                    var userTrans = PagingList.Create(item, (int)noOfRecordsPerPage, page);
+
+                    if (userTrans.Count == 1)
+                        ModelState.AddModelError("Info", "No Current Record Found.");
+
+                    userTrans.RouteValue = new RouteValueDictionary {
                 { "AccountNumber", AccountNumber}
                 };
 
-                return View(userTrans);
-            //}
-            //else
-            //{
-            //    return this.RedirectToAction("Login", "Users");
-            //}
-           
+                    return View(userTrans);
+                }
+            }
+            else
+            {
+                return RedirectToAction("Login","Users");
+            }
+            
         }
 
 

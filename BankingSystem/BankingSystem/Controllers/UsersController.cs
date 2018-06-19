@@ -77,6 +77,7 @@ namespace BankingSystem.Controllers
         {
 
             ViewData["ReturnUrl"] = returnUrl;
+            
             if (!ModelState.IsValid)
             {
                 ModelState.AddModelError("Error", "Login Name/Password does not match.");
