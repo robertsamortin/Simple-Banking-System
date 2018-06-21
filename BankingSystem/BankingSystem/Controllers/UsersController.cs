@@ -26,8 +26,7 @@ namespace BankingSystem.Controllers
         {
             return View();
         }
-
-        [HttpGet]
+        
         public JsonResult UserAlreadyExistsAsync(string LoginName)
         {
             var result = _repo.CheckLoginName(LoginName);
@@ -53,6 +52,7 @@ namespace BankingSystem.Controllers
         }
 
         //Login
+        [HttpGet]
         public IActionResult Login(string returnUrl)
         {
 
@@ -90,7 +90,7 @@ namespace BankingSystem.Controllers
             {
                 _userManager.SignIn(this.HttpContext, user, false);
                 if (string.IsNullOrEmpty(loginViewModel.ReturnUrl))
-                    return RedirectToAction("Index", "UserTransactions", new { AccountNumber = user.AccountNumber });
+                    return RedirectToAction("Index", "UserTransactions", new { id = user.ID});
 
                 return Redirect(loginViewModel.ReturnUrl);
             }
@@ -108,9 +108,9 @@ namespace BankingSystem.Controllers
         }
 
         //CHEck account no if existing
-        public bool CheckAccount(string AccountNumber)
+        public bool CheckAccount(string ID)
         {
-            var userTrans = _repo.GetUserByAccountNumber(AccountNumber);
+            var userTrans = _repo.GetUserByID(ID);
             if (userTrans.AccountNumber != null)
                 return true;
             return false;

@@ -25,7 +25,7 @@ namespace BankingSystem.Models.Repositories
             if (currentUserId == null)
                 return null;
 
-            return _repo.GetUserByAccountNumber(currentUserId);
+            return _repo.GetUserByID(currentUserId);
         }
 
         public string GetCurrentUserId(HttpContext httpContext)
@@ -69,8 +69,9 @@ namespace BankingSystem.Models.Repositories
         {
             List<Claim> claims = new List<Claim>();
 
-            claims.Add(new Claim(ClaimTypes.NameIdentifier, user.AccountNumber.ToString()));
-            claims.Add(new Claim(ClaimTypes.Name, user.LoginName));
+            claims.Add(new Claim(ClaimTypes.NameIdentifier, user.ID.ToString()));
+            claims.Add(new Claim(ClaimTypes.GivenName, user.LoginName));
+            claims.Add(new Claim(ClaimTypes.Name, user.AccountNumber.ToString()));
             return claims;
         }
     }

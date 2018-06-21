@@ -76,7 +76,7 @@ namespace BankingSystem.Models.Repositories
             return result;
         }
 
-        public Users GetUserByAccountNumber(string AccountNumber)
+        public Users GetUserByID(string ID)
         {
             Users usr = new Users();
 
@@ -84,10 +84,10 @@ namespace BankingSystem.Models.Repositories
             {
                 try
                 {
-                    SqlCommand cmd = new SqlCommand("spUserGetByAccountNumber", con);
+                    SqlCommand cmd = new SqlCommand("spUserGetByID", con);
                     cmd.CommandType = CommandType.StoredProcedure;
 
-                    cmd.Parameters.AddWithValue("@AccountNumber", AccountNumber);
+                    cmd.Parameters.AddWithValue("@ID", ID);
 
                     con.Open();
                     SqlDataReader rdr = cmd.ExecuteReader();
@@ -123,36 +123,58 @@ namespace BankingSystem.Models.Repositories
             return usr;
         }
 
-        public List<UserTransactions> GetUserTransactionsByAccountNumber(string AccountNumber)
+        public List<UserTransactions> GetUserTransactionsByID(string ID)
         {
             List<UserTransactions> lstTrans = new List<UserTransactions>();
 
             using (SqlConnection con = new SqlConnection(connectionString))
             {
-                SqlCommand cmd = new SqlCommand("spUserTransactionsGetAll", con);
-                cmd.CommandType = CommandType.StoredProcedure;
+                try
+                {
+                    SqlCommand cmd = new SqlCommand("spUserTransactionsGetAll", con);
+                    cmd.CommandType = CommandType.StoredProcedure;
 
-                cmd.Parameters.AddWithValue("@AccountNumber", AccountNumber);
+                    cmd.Parameters.AddWithValue("@ID", ID);
 
-                con.Open();
-                SqlDataReader rdr = cmd.ExecuteReader();
+                    con.Open();
+                    SqlDataReader rdr = cmd.ExecuteReader();
 
-                while (rdr.Read())
+                    while (rdr.Read())
+                    {
+                        UserTransactions usr = new UserTransactions();
+
+                        usr.ID = Convert.ToInt32(rdr["ID"]);
+                        usr.AccountNumber = rdr["AccountNumber"].ToString();
+                        usr.Amount = double.Parse(rdr["Amount"].ToString());
+                        usr.RunningBalance = double.Parse(rdr["RunningBalance"].ToString());
+                        usr.TransType = rdr["TransType"].ToString();
+                        usr.TransDate = DateTime.Parse(rdr["TransDate"].ToString());
+                        usr.TransBy = rdr["TransBy"].ToString();
+                        usr.Balance = double.Parse(string.Format("{0:N2}", rdr["Balance"].ToString()));
+
+                        lstTrans.Add(usr);
+                    }
+                    //con.Close();
+                }
+                catch
                 {
                     UserTransactions usr = new UserTransactions();
 
-                    usr.ID = Convert.ToInt32(rdr["ID"]);
-                    usr.AccountNumber = rdr["AccountNumber"].ToString();
-                    usr.Amount = double.Parse(rdr["Amount"].ToString());
-                    usr.RunningBalance = double.Parse(rdr["RunningBalance"].ToString());
-                    usr.TransType = rdr["TransType"].ToString();
-                    usr.TransDate = DateTime.Parse(rdr["TransDate"].ToString());
-                    usr.TransBy = rdr["TransBy"].ToString();
-                    usr.Balance = double.Parse(string.Format("{0:N2}", rdr["Balance"].ToString()));
+                    usr.ID = 0;
+                    usr.AccountNumber = null;
+                    usr.Amount = 0;
+                    usr.RunningBalance = 0;
+                    usr.TransType = null;
+                    usr.TransDate = DateTime.Now;
+                    usr.TransBy = null;
+                    usr.Balance = 0;
 
                     lstTrans.Add(usr);
                 }
-                con.Close();
+                finally
+                {
+                    con.Close();
+                }
             }
             return lstTrans;
         }
@@ -169,6 +191,7 @@ namespace BankingSystem.Models.Repositories
                     SqlCommand cmd = new SqlCommand("spUserTransactionsInsert", con, sqlTrans);
                     cmd.CommandType = CommandType.StoredProcedure;
 
+                    cmd.Parameters.AddWithValue("@ID", usrTrans.ID.ToString());
                     cmd.Parameters.AddWithValue("@AccountNumber", usrTrans.AccountNumber);
                     cmd.Parameters.AddWithValue("@Amount", usrTrans.Amount);
                     cmd.Parameters.AddWithValue("@TransType", usrTrans.TransType);

@@ -1,18 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using BankingSystem.Models;
 using BankingSystem.Models.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
-using ReflectionIT.Mvc;
 using ReflectionIT.Mvc.Paging;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace BankingSystem.Controllers
 {
+    [Authorize]
     public class UserTransactionsController : Controller
     {
         private IUserManager _userManager;
@@ -24,68 +23,86 @@ namespace BankingSystem.Controllers
             _repo = repo;
         }
 
-        public IActionResult Index(string AccountNumber, int page = 1)
+        public IActionResult Index(string ID, int page = 1)
         {
-            if (User.Identity.IsAuthenticated)
+            var user = _repo.GetUserByID(ID);
+            var currentUser = _userManager.GetCurrentUser(this.HttpContext).ID.ToString();
+            if (user.ID == 0)
             {
-                var accntNumber = _repo.GetUserByAccountNumber(AccountNumber);
-                var currentUser = _userManager.GetCurrentUser(this.HttpContext).AccountNumber;
-                if (accntNumber.AccountNumber == null)
-                {
-                    return StatusCode(404);
-                }
-                else
-                {
-                    var item = _repo.GetUserTransactionsByAccountNumber(AccountNumber);
-
-                    var recordCount = item.Count();
-                    var noOfRecordsPerPage = 10.0;
-                    var pageNumber = Math.Ceiling(recordCount / noOfRecordsPerPage);
-
-                    if (currentUser != AccountNumber || currentUser == null)
-                    {
-                        return StatusCode(403);
-                    }
-                    if (page > pageNumber)
-                    {
-                        return StatusCode(404);
-                    }
-                    var userTrans = PagingList.Create(item, (int)noOfRecordsPerPage, page);
-
-                    if (userTrans.Count == 1)
-                        ModelState.AddModelError("Info", "No Current Record Found.");
-
-                    userTrans.RouteValue = new RouteValueDictionary {
-                { "AccountNumber", AccountNumber}
-                };
-
-                    return View(userTrans);
-                }
+                return StatusCode(404);
             }
-            else
+            
+            var item = _repo.GetUserTransactionsByID(ID);
+
+            var recordCount = item.Count();
+            var noOfRecordsPerPage = 10.0;
+            var pageNumber = Math.Ceiling(recordCount / noOfRecordsPerPage);
+
+            if (currentUser != ID)
             {
-                return RedirectToAction("Login","Users");
+                return StatusCode(403);
             }
+            if (page > pageNumber)
+            {
+                return StatusCode(404);
+            }
+            var userTrans = PagingList.Create(item, (int)noOfRecordsPerPage, page);
+
+            if (userTrans.Count == 1)
+                ModelState.AddModelError("Info", "No Current Record Found.");
+
+            userTrans.RouteValue = new RouteValueDictionary { { "ID", ID } };
+
+            return View(userTrans);
             
         }
 
 
-        //Insert Users Transaction
-        [HttpPost]
-        public IActionResult InsertTrans(UserTransactions usrTrans)
-        {
-            if (ModelState.IsValid)
-            {
-                usrTrans.TransDate = DateTime.Now;
-                _repo.InsertUserTransactions(usrTrans);
-            }
-            return Ok(usrTrans);
-        }
+        ////Insert Users Transaction
+        //[HttpPost]
+        //public IActionResult InsertTrans(UserTransactions usrTrans)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        usrTrans.TransDate = DateTime.Now;
+        //        _repo.InsertUserTransactions(usrTrans);
+        //    }
+        //    return Ok(usrTrans);
+        //}
 
         public bool CheckBalance(string AccountNumber, double CurrBalance)
         {
             var result = _repo.CheckBalance(AccountNumber, CurrBalance);
             return result;
         }
+
+        public IActionResult Deposit(string ID)
+        {
+           
+            var model = new UserTransactions
+            {
+                ID = _userManager.GetCurrentUser(this.HttpContext).ID,
+                Balance = _userManager.GetCurrentUser(this.HttpContext).Balance
+             };
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Deposit([Bind] UserTransactions usrTrans)
+        {
+            if (ModelState.IsValid)
+            {
+                usrTrans.AccountNumber = _userManager.GetCurrentUser(this.HttpContext).AccountNumber;
+                usrTrans.TransBy = _userManager.GetCurrentUser(this.HttpContext).AccountNumber;
+                usrTrans.TransType = "Deposit";
+                usrTrans.TransDate = DateTime.Now;
+                usrTrans.ID = _userManager.GetCurrentUser(this.HttpContext).ID;
+                _repo.InsertUserTransactions(usrTrans);
+                return RedirectToAction("Index", "UserTransactions", new { id = usrTrans.ID });
+            }
+            return View(usrTrans);
+        }
+
     }
 }

@@ -57,7 +57,6 @@ namespace BankingSystem
             {
                 app.UseBrowserLink();
                 app.UseDeveloperExceptionPage();
-                //app.UseExceptionHandler("/Home/Error");
             }
             else
             {

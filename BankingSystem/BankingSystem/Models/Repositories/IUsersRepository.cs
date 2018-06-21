@@ -9,9 +9,9 @@ namespace BankingSystem.Models.Repositories
     {
         void AddUser(Users usr);
         Users UserLogin(string LoginName, string Password);
-        Users GetUserByAccountNumber(string AccountNumber);
+        Users GetUserByID(string ID);
         bool CheckLoginName(string LoginName);
-        List<UserTransactions> GetUserTransactionsByAccountNumber(string AccountNumber);
+        List<UserTransactions> GetUserTransactionsByID(string ID);
         void InsertUserTransactions(UserTransactions usrTrans);
         bool CheckBalance(string AccountNumber, double CurrBalance);
     }
