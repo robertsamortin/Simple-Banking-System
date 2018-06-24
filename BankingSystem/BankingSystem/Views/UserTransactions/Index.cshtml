@@ -35,9 +35,9 @@
         @*<button onclick="ShowPopUpDep()" type="button" class="btn btn-primary btn-md">Deposit</button>
         <button onclick="ShowPopUpWith()" @(Model.FirstOrDefault().Balance == 0 ? "disabled" : "") type="button" class="btn btn-primary btn-md" asp-controller="Users" asp-action="Login">Withdrawal</button>
         <button onclick="ShowPopUpFund()" @(Model.FirstOrDefault().Balance == 0 ? "disabled" : "") type="button" class="btn btn-primary btn-md" asp-controller="Users" asp-action="Login">Fund Transfer</button>*@
-        <a class="btn btn-primary btn-md"  asp-controller="UserTransactions" asp-action="Deposit" asp-route-id="@ID">Deposit</a>
-        <button  @(Model.FirstOrDefault().Balance == 0 ? "disabled" : "") type="button" class="btn btn-primary btn-md">Withdrawal</button>
-        <button  @(Model.FirstOrDefault().Balance == 0 ? "disabled" : "") type="button" class="btn btn-primary btn-md">Fund Transfer</button>
+        <a class="btn btn-primary btn-md" asp-controller="UserTransactions" asp-action="Transact" asp-route-id="@ID" asp-route-type="deposit">Deposit</a>
+        <a class="btn btn-primary btn-md" asp-controller="UserTransactions" asp-action="Transact" asp-route-id="@ID" asp-route-type="withdrawal">Withdrawal</a>
+        <a class="btn btn-primary btn-md" asp-controller="UserTransactions" asp-action="Transact" asp-route-id="@ID" asp-route-type="fundtransfer">Fund Transfer</a>
     </div>
 
     <h4><strong>TRANSACTION HISTORY</strong></h4>

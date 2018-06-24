@@ -12294,7 +12294,7 @@
       ]
     },
     "System.Runtime.Serialization.Json/4.0.2": {
-      "sha512": "lsZNGy6RoAWAMLqAyvfQ1q94g0Tyc98XyPKvMovUS74kXlPjyWCCAilA35pYE274y0Ftjhlf1GcEktjw58NPWQ==",
+      "sha512": "+7DIJhnKYgCzUgcLbVTtRQb2l1M0FP549XFlFkQM5lmNiUBl44AfNbx4bz61xA8PzLtlYwfmif4JJJW7MPPnjg==",
       "type": "package",
       "path": "system.runtime.serialization.json/4.0.2",
       "files": [
@@ -14151,26 +14151,23 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\User\\.nuget\\packages\\": {},
+    "C:\\Users\\dell\\.nuget\\packages\\": {},
     "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
   },
   "project": {
     "version": "1.0.0",
-    "restoreSettings": {
-      "hideWarningsAndErrors": true
-    },
     "restore": {
-      "projectUniqueName": "D:\\My Files\\Simple-Banking-System\\BankingSystem\\UnitTest\\UnitTest.csproj",
+      "projectUniqueName": "C:\\MyFiles\\Simple-Banking-System\\BankingSystem\\UnitTest\\UnitTest.csproj",
       "projectName": "UnitTest",
-      "projectPath": "D:\\My Files\\Simple-Banking-System\\BankingSystem\\UnitTest\\UnitTest.csproj",
-      "packagesPath": "C:\\Users\\User\\.nuget\\packages\\",
-      "outputPath": "D:\\My Files\\Simple-Banking-System\\BankingSystem\\UnitTest\\obj\\",
+      "projectPath": "C:\\MyFiles\\Simple-Banking-System\\BankingSystem\\UnitTest\\UnitTest.csproj",
+      "packagesPath": "C:\\Users\\dell\\.nuget\\packages\\",
+      "outputPath": "C:\\MyFiles\\Simple-Banking-System\\BankingSystem\\UnitTest\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
       ],
       "configFilePaths": [
-        "C:\\Users\\User\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\dell\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -14183,8 +14180,8 @@
       "frameworks": {
         "netcoreapp2.0": {
           "projectReferences": {
-            "D:\\My Files\\Simple-Banking-System\\BankingSystem\\BankingSystem\\BankingSystem.csproj": {
-              "projectPath": "D:\\My Files\\Simple-Banking-System\\BankingSystem\\BankingSystem\\BankingSystem.csproj"
+            "C:\\MyFiles\\Simple-Banking-System\\BankingSystem\\BankingSystem\\BankingSystem.csproj": {
+              "projectPath": "C:\\MyFiles\\Simple-Banking-System\\BankingSystem\\BankingSystem\\BankingSystem.csproj"
             }
           }
         }

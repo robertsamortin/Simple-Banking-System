@@ -53,3 +53,14 @@ D:\My Files\Simple-Banking-System\BankingSystem\BankingSystem\obj\Debug\netcorea
 D:\My Files\Simple-Banking-System\BankingSystem\BankingSystem\obj\Debug\netcoreapp2.0\BankingSystem.AssemblyInfo.cs
 D:\My Files\Simple-Banking-System\BankingSystem\BankingSystem\obj\Debug\netcoreapp2.0\BankingSystem.dll
 D:\My Files\Simple-Banking-System\BankingSystem\BankingSystem\obj\Debug\netcoreapp2.0\BankingSystem.pdb
+C:\MyFiles\Simple-Banking-System\BankingSystem\BankingSystem\bin\Debug\netcoreapp2.0\BankingSystem.deps.json
+C:\MyFiles\Simple-Banking-System\BankingSystem\BankingSystem\bin\Debug\netcoreapp2.0\BankingSystem.runtimeconfig.json
+C:\MyFiles\Simple-Banking-System\BankingSystem\BankingSystem\bin\Debug\netcoreapp2.0\BankingSystem.runtimeconfig.dev.json
+C:\MyFiles\Simple-Banking-System\BankingSystem\BankingSystem\bin\Debug\netcoreapp2.0\BankingSystem.dll
+C:\MyFiles\Simple-Banking-System\BankingSystem\BankingSystem\bin\Debug\netcoreapp2.0\BankingSystem.pdb
+C:\MyFiles\Simple-Banking-System\BankingSystem\BankingSystem\obj\Debug\netcoreapp2.0\BankingSystem.csprojAssemblyReference.cache
+C:\MyFiles\Simple-Banking-System\BankingSystem\BankingSystem\obj\Debug\netcoreapp2.0\BankingSystem.csproj.CoreCompileInputs.cache
+C:\MyFiles\Simple-Banking-System\BankingSystem\BankingSystem\obj\Debug\netcoreapp2.0\BankingSystem.AssemblyInfoInputs.cache
+C:\MyFiles\Simple-Banking-System\BankingSystem\BankingSystem\obj\Debug\netcoreapp2.0\BankingSystem.AssemblyInfo.cs
+C:\MyFiles\Simple-Banking-System\BankingSystem\BankingSystem\obj\Debug\netcoreapp2.0\BankingSystem.dll
+C:\MyFiles\Simple-Banking-System\BankingSystem\BankingSystem\obj\Debug\netcoreapp2.0\BankingSystem.pdb

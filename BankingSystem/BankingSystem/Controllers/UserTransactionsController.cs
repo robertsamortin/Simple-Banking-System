@@ -76,28 +76,52 @@ namespace BankingSystem.Controllers
             return result;
         }
 
-        public IActionResult Deposit(string ID)
+        public IActionResult Transact(string ID, string type)
         {
-           
+            string transType = "";
+            if (type == "deposit")
+            { transType = "Deposit"; }
+            else if (type == "withdrawal")
+            { transType = "Withdrawal"; }
+            else if (type == "fundtransfer")
+            { transType = "Fund Transfer"; }
+            else
+            {
+                transType = "";
+                    return StatusCode(404); }
             var model = new UserTransactions
             {
                 ID = _userManager.GetCurrentUser(this.HttpContext).ID,
-                Balance = _userManager.GetCurrentUser(this.HttpContext).Balance
-             };
+                Balance = _userManager.GetCurrentUser(this.HttpContext).Balance,
+                TransType = transType
+            };
             return View(model);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Deposit([Bind] UserTransactions usrTrans)
+        public IActionResult Transact([Bind] UserTransactions usrTrans, [FromQuery(Name = "type")] string type)
         {
+            if (type == "deposit")
+            { usrTrans.TransType = "Deposit"; }
+            else if (type == "withdrawal")
+            { usrTrans.TransType = "Withdrawal"; }
+            else if (type == "fundtransfer")
+            { usrTrans.TransType = "Fund Transfer"; }
+            else
+            {
+                usrTrans.TransType = "";
+                return StatusCode(404);
+            }
+            usrTrans.AccountNumber = _userManager.GetCurrentUser(this.HttpContext).AccountNumber;
+            usrTrans.TransBy = _userManager.GetCurrentUser(this.HttpContext).AccountNumber;
+            //usrTrans.TransType = "Deposit";
+            usrTrans.TransDate = DateTime.Now;
+            usrTrans.ID = _userManager.GetCurrentUser(this.HttpContext).ID;
+            usrTrans.Balance = _userManager.GetCurrentUser(this.HttpContext).Balance;
+
             if (ModelState.IsValid)
             {
-                usrTrans.AccountNumber = _userManager.GetCurrentUser(this.HttpContext).AccountNumber;
-                usrTrans.TransBy = _userManager.GetCurrentUser(this.HttpContext).AccountNumber;
-                usrTrans.TransType = "Deposit";
-                usrTrans.TransDate = DateTime.Now;
-                usrTrans.ID = _userManager.GetCurrentUser(this.HttpContext).ID;
                 _repo.InsertUserTransactions(usrTrans);
                 return RedirectToAction("Index", "UserTransactions", new { id = usrTrans.ID });
             }

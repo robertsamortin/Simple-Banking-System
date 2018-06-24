@@ -10,7 +10,7 @@ namespace BankingSystem.Models.Repositories
     public class UsersRepository : IUsersRepository
     {
         //Change connection to the database
-        string connectionString = "Server =.\\SQLEXPRESS01;Database=Banking;Integrated Security = true;";
+        string connectionString = "Server =.\\SQLEXPRESS;Database=Banking;Integrated Security = true;";
         SqlTransaction sqlTrans = null;
 
         public void AddUser(Users usr)
@@ -187,21 +187,57 @@ namespace BankingSystem.Models.Repositories
                 try
                 {
                     con.Open();
-                    sqlTrans = con.BeginTransaction();
-                    SqlCommand cmd = new SqlCommand("spUserTransactionsInsert", con, sqlTrans);
-                    cmd.CommandType = CommandType.StoredProcedure;
+                    sqlTrans = con.BeginTransaction(IsolationLevel.RepeatableRead);
+                    SqlCommand cmd = con.CreateCommand();
+                    cmd.Transaction = sqlTrans;
+                    //SqlCommand cmd = new SqlCommand("spUserTransactionsInsert", con, sqlTrans);
+                    //cmd.CommandType = CommandType.StoredProcedure;
 
-                    cmd.Parameters.AddWithValue("@ID", usrTrans.ID.ToString());
+                    //cmd.Parameters.AddWithValue("@ID", usrTrans.ID.ToString());
+                    //cmd.Parameters.AddWithValue("@AccountNumber", usrTrans.AccountNumber);
+                    //cmd.Parameters.AddWithValue("@Amount", usrTrans.Amount);
+                    //cmd.Parameters.AddWithValue("@TransType", usrTrans.TransType);
+                    //cmd.Parameters.AddWithValue("@TransDate", usrTrans.TransDate);
+                    //cmd.Parameters.AddWithValue("@TransBy", usrTrans.TransBy);
                     cmd.Parameters.AddWithValue("@AccountNumber", usrTrans.AccountNumber);
-                    cmd.Parameters.AddWithValue("@Amount", usrTrans.Amount);
+                    
                     cmd.Parameters.AddWithValue("@TransType", usrTrans.TransType);
                     cmd.Parameters.AddWithValue("@TransDate", usrTrans.TransDate);
                     cmd.Parameters.AddWithValue("@TransBy", usrTrans.TransBy);
+                    cmd.Parameters.AddWithValue("@ID", usrTrans.ID.ToString());
+                    if (usrTrans.TransType == "Deposit")
+                    {
+                        cmd.Parameters.AddWithValue("@Amount", usrTrans.Amount);
+                    }
+                    else
+                    {
+                        cmd.Parameters.AddWithValue("@Amount", usrTrans.Amount * -1);
+                    }
 
+                    cmd.CommandText = "Insert into Transactions(AccountNumber,Amount, TransType, TransDate, TransBy)" +
+                        "Values (@AccountNumber,@Amount,@TransType, @TransDate,@TransBy)";
                     cmd.ExecuteNonQuery();
+
+                    if (usrTrans.TransType == "Fund Transfer")
+                    {
+                        cmd.CommandText = "Insert into Transactions(AccountNumber,Amount, TransType, TransDate, TransBy)" +
+                            "Values (@AccountNumber,@Amount * -1,@TransType, @TransDate,@TransBy)";
+                        cmd.ExecuteNonQuery();
+
+                        cmd.CommandText = "Update Users set Balance = Balance + @Amount  where AccountNumber = @TransBy";
+                        cmd.ExecuteNonQuery();
+
+                        cmd.CommandText = "Update Users set Balance = Balance + (@Amount * -1)  where ID = @ID";
+                        cmd.ExecuteNonQuery();
+                    }
+                    else
+                    {
+                        cmd.CommandText = "Update Users set Balance = Balance + @Amount where ID = @ID";
+                        cmd.ExecuteNonQuery();
+                    }
                     sqlTrans.Commit();
                 }
-                catch
+                catch 
                 {
                     if (sqlTrans != null)
                     {
